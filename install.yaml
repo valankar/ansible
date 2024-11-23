@@ -11,6 +11,7 @@
       - 'o=Docker,a=${distro_codename}'
       - 'site=packages.kopia.io,a=stable'
       unattended_remove_unused_dependencies: true
+      unattended_remove_unused_kernel_packages: true
       unattended_automatic_reboot: true
   tasks:
    - name: Upgrade packages

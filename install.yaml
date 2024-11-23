@@ -1,0 +1,61 @@
+- name: Setup hosts after install
+  hosts: myhosts
+  become: true
+  tasks:
+   - name: Upgrade packages
+     ansible.builtin.apt:
+       update_cache: true
+       upgrade: dist
+   - name: Install default packages
+     ansible.builtin.apt:
+       pkg:
+       - apt-listchanges
+       - calc
+       - curl
+       - emacs-nox
+       - jq
+       - ledger
+       - rsync
+       - unattended-upgrades
+       - unzip
+       - vim
+   - name: Setup Docker
+     block:
+       - name: Add Docker GPG apt key
+         ansible.builtin.get_url:
+           url: https://download.docker.com/linux/debian/gpg
+           dest: /etc/apt/keyrings/docker.asc
+           mode: '644'
+       - name: Add Docker repository
+         ansible.builtin.apt_repository:
+           repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+           filename: docker
+       - name: Install Docker packages
+         ansible.builtin.apt:
+           pkg:
+           - docker-ce
+           - docker-ce-cli
+           - containerd.io
+           - docker-buildx-plugin
+           - docker-compose-plugin
+           update_cache: true
+       - name: Setup Docker config
+         ansible.builtin.copy:
+           src: docker_daemon.json
+           dest: /etc/docker/daemon.json
+           directory_mode: '755'
+           mode: '644'
+       - name: Reduce systemd logging
+         ansible.builtin.blockinfile:
+           path: /etc/systemd/journald.conf
+           block: |
+             MaxLevelStore=notice
+             MaxLevelSyslog=notice
+       - name: Add valankar to docker group
+         ansible.builtin.user:
+           name: valankar
+           append: true
+           groups:
+           - docker
+   - name: Reboot
+     ansible.builtin.reboot:

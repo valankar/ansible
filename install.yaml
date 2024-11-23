@@ -20,7 +20,6 @@
    - name: Install default packages
      ansible.builtin.apt:
        pkg:
-       - apt-listchanges
        - byobu
        - calc
        - curl

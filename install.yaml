@@ -13,12 +13,14 @@
       unattended_remove_unused_dependencies: true
       unattended_remove_unused_kernel_packages: true
       unattended_automatic_reboot: true
+      notify: reboot
     - role: stefangweichinger.ansible_rclone
   tasks:
    - name: Upgrade packages
      ansible.builtin.apt:
        update_cache: true
        upgrade: dist
+     notify: reboot
    - name: Install default packages
      ansible.builtin.apt:
        pkg:
@@ -81,5 +83,8 @@
            append: true
            groups:
            - docker
-   - name: Reboot
-     ansible.builtin.reboot:
+     notify: reboot
+
+  handlers:
+  - name: reboot
+    ansible.builtin.reboot:

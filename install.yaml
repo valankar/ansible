@@ -34,6 +34,14 @@
        - sqlite3
        - unzip
        - vim
+       - zram-tools
+   - name: Setup zram swap
+     ansible.builtin.blockinfile:
+       path: /etc/default/zramswap
+       block: |
+         ALGO=zstd
+         PERCENT=100
+     notify: reboot
    - name: Install kopia
      block:
        - name: Add kopia apt repository

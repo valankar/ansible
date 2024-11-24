@@ -31,6 +31,7 @@
        - jq
        - ledger
        - rsync
+       - sqlite3
        - unzip
        - vim
    - name: Install kopia

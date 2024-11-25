@@ -36,7 +36,6 @@
        - vim
        - zram-tools
    - name: Setup zram swap
-     # See https://wiki.archlinux.org/title/Zram#Optimizing_swap_on_zram
      block:
        - name: zram config
          ansible.builtin.blockinfile:
@@ -44,18 +43,17 @@
            block: |
              ALGO=zstd
              PERCENT=100
-       - ansible.builtin.sysctl:
-           name: vm.swappiness
-           value: '160'
-       - ansible.builtin.sysctl:
-           name: vm.watermark_boost_factor
-           value: '0'
-       - ansible.builtin.sysctl:
-           name: vm.watermark_scale_factor
-           value: '125'
-       - ansible.builtin.sysctl:
-           name: vm.page-cluster
-           value: '0'
+       - name: zram sysctls
+         ansible.builtin.copy:
+           src: sysctl/zram.conf
+           dest: /etc/sysctl.d/zram.conf
+           mode: '644'
+     notify: reboot
+   - name: cloudflared sysctls
+     ansible.builtin.copy:
+       src: sysctl/cloudflared.conf
+       dest: /etc/sysctl.d/cloudflared.conf
+       mode: '644'
      notify: reboot
    - name: Install kopia
      block:

@@ -4,108 +4,108 @@
   roles:
     - role: hifis.toolkit.unattended_upgrades
       unattended_origins_patterns:
-      - 'origin=Debian,codename=${distro_codename}-updates'
-      - 'origin=Debian,codename=${distro_codename},label=Debian'
-      - 'origin=Debian,codename=${distro_codename},label=Debian-Security'
-      - 'origin=Debian,codename=${distro_codename}-security,label=Debian-Security'
-      - 'o=Docker,a=${distro_codename}'
-      - 'site=packages.kopia.io,a=stable'
+        - "origin=Debian,codename=${distro_codename}-updates"
+        - "origin=Debian,codename=${distro_codename},label=Debian"
+        - "origin=Debian,codename=${distro_codename},label=Debian-Security"
+        - "origin=Debian,codename=${distro_codename}-security,label=Debian-Security"
+        - "o=Docker,a=${distro_codename}"
+        - "site=packages.kopia.io,a=stable"
       unattended_remove_unused_dependencies: true
       unattended_remove_unused_kernel_packages: true
       unattended_automatic_reboot: true
       notify: reboot
     - role: stefangweichinger.ansible_rclone
   tasks:
-   - name: Upgrade packages
-     ansible.builtin.apt:
-       update_cache: true
-       upgrade: dist
-     notify: reboot
-   - name: Install default packages
-     ansible.builtin.apt:
-       pkg:
-       - byobu
-       - calc
-       - curl
-       - emacs-nox
-       - jq
-       - ledger
-       - rsync
-       - sqlite3
-       - unzip
-       - vim
-       - zram-tools
-   - name: Setup zram swap
-     block:
-       - name: zram config
-         ansible.builtin.blockinfile:
-           path: /etc/default/zramswap
-           block: |
-             ALGO=zstd
-             PERCENT=100
-       - name: zram sysctls
-         ansible.builtin.copy:
-           src: sysctl/zram.conf
-           dest: /etc/sysctl.d/zram.conf
-           mode: '644'
-     notify: reboot
-   - name: cloudflared sysctls
-     ansible.builtin.copy:
-       src: sysctl/cloudflared.conf
-       dest: /etc/sysctl.d/cloudflared.conf
-       mode: '644'
-     notify: reboot
-   - name: Install kopia
-     block:
-       - name: Add kopia apt repository
-         ansible.builtin.deb822_repository:
-           name: kopia
-           uris: http://packages.kopia.io/apt/
-           signed_by: https://kopia.io/signing-key
-           suites: stable
-           components: main
-       - name: Install kopia packages
-         ansible.builtin.apt:
-           pkg:
-           - kopia
-           update_cache: true
-   - name: Setup Docker
-     block:
-       - name: Add docker apt repository
-         ansible.builtin.deb822_repository:
-           name: docker
-           uris: "https://download.docker.com/linux/debian/"
-           signed_by: https://download.docker.com/linux/debian/gpg
-           suites: "{{ ansible_distribution_release }}"
-           components: stable
-       - name: Install Docker packages
-         ansible.builtin.apt:
-           pkg:
-           - docker-ce
-           - docker-ce-cli
-           - containerd.io
-           - docker-buildx-plugin
-           - docker-compose-plugin
-           update_cache: true
-       - name: Setup Docker config
-         ansible.builtin.copy:
-           src: docker_daemon.json
-           dest: /etc/docker/daemon.json
-           directory_mode: '755'
-           mode: '644'
-       - name: Reduce systemd logging
-         ansible.builtin.blockinfile:
-           path: /etc/systemd/journald.conf
-           block: |
-             MaxLevelStore=notice
-             MaxLevelSyslog=notice
-       - name: Add valankar to docker group
-         ansible.builtin.user:
-           name: valankar
-           append: true
-           groups:
-           - docker
-     notify: reboot
+    - name: Upgrade packages
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: dist
+      notify: reboot
+    - name: Install default packages
+      ansible.builtin.apt:
+        pkg:
+          - byobu
+          - calc
+          - curl
+          - emacs-nox
+          - jq
+          - ledger
+          - rsync
+          - sqlite3
+          - unzip
+          - vim
+          - zram-tools
+    - name: Setup zram swap
+      block:
+        - name: zram config
+          ansible.builtin.blockinfile:
+            path: /etc/default/zramswap
+            block: |
+              ALGO=zstd
+              PERCENT=100
+        - name: zram sysctls
+          ansible.builtin.copy:
+            src: sysctl/zram.conf
+            dest: /etc/sysctl.d/zram.conf
+            mode: "644"
+      notify: reboot
+    - name: cloudflared sysctls
+      ansible.builtin.copy:
+        src: sysctl/cloudflared.conf
+        dest: /etc/sysctl.d/cloudflared.conf
+        mode: "644"
+      notify: reboot
+    - name: Install kopia
+      block:
+        - name: Add kopia apt repository
+          ansible.builtin.deb822_repository:
+            name: kopia
+            uris: http://packages.kopia.io/apt/
+            signed_by: https://kopia.io/signing-key
+            suites: stable
+            components: main
+        - name: Install kopia packages
+          ansible.builtin.apt:
+            pkg:
+              - kopia
+            update_cache: true
+    - name: Setup Docker
+      block:
+        - name: Add docker apt repository
+          ansible.builtin.deb822_repository:
+            name: docker
+            uris: "https://download.docker.com/linux/debian/"
+            signed_by: https://download.docker.com/linux/debian/gpg
+            suites: "{{ ansible_distribution_release }}"
+            components: stable
+        - name: Install Docker packages
+          ansible.builtin.apt:
+            pkg:
+              - docker-ce
+              - docker-ce-cli
+              - containerd.io
+              - docker-buildx-plugin
+              - docker-compose-plugin
+            update_cache: true
+        - name: Setup Docker config
+          ansible.builtin.copy:
+            src: docker_daemon.json
+            dest: /etc/docker/daemon.json
+            directory_mode: "755"
+            mode: "644"
+        - name: Reduce systemd logging
+          ansible.builtin.blockinfile:
+            path: /etc/systemd/journald.conf
+            block: |
+              MaxLevelStore=notice
+              MaxLevelSyslog=notice
+        - name: Add valankar to docker group
+          ansible.builtin.user:
+            name: valankar
+            append: true
+            groups:
+              - docker
+      notify: reboot
   handlers:
-  - name: reboot
-    ansible.builtin.reboot:
+    - name: reboot
+      ansible.builtin.reboot:

@@ -36,11 +36,26 @@
        - vim
        - zram-tools
    - name: Setup zram swap
-     ansible.builtin.blockinfile:
-       path: /etc/default/zramswap
-       block: |
-         ALGO=zstd
-         PERCENT=100
+     # See https://wiki.archlinux.org/title/Zram#Optimizing_swap_on_zram
+     block:
+       - name: zram config
+         ansible.builtin.blockinfile:
+           path: /etc/default/zramswap
+           block: |
+             ALGO=zstd
+             PERCENT=100
+       - ansible.builtin.sysctl:
+           name: vm.swappiness
+           value: '160'
+       - ansible.builtin.sysctl:
+           name: vm.watermark_boost_factor
+           value: '0'
+       - ansible.builtin.sysctl:
+           name: vm.watermark_scale_factor
+           value: '125'
+       - ansible.builtin.sysctl:
+           name: vm.page-cluster
+           value: '0'
      notify: reboot
    - name: Install kopia
      block:
@@ -93,7 +108,6 @@
            groups:
            - docker
      notify: reboot
-
   handlers:
   - name: reboot
     ansible.builtin.reboot:

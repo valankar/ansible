@@ -4,11 +4,11 @@ Ansible config for new machines.
 
 ```shell
 ansible-galaxy collection install hifis.toolkit
-ansible-galaxy install stefangweichinger.ansible_rclone
+ansible-galaxy role install stefangweichinger.ansible_rclone
 ```
 
 # Run
 
 ```shell
-ansible-playbook -i inventory.ini install.yaml --ask-become-pass
+ansible-playbook -i inventory.ini main.yaml --ask-become-pass
 ```

@@ -1,5 +1,5 @@
 - name: Setup hosts after install
-  hosts: install
+  hosts: all
   become: true
   roles:
     - role: hifis.toolkit.unattended_upgrades
@@ -109,3 +109,15 @@
   handlers:
     - name: reboot
       ansible.builtin.reboot:
+      # debug:
+      #   msg: Would reboot
+
+- name: Setup dev machines
+  hosts: dev
+  tasks:
+    - name: Install dev packages
+      ansible.builtin.apt:
+        pkg:
+          - clang
+          - libxml2-dev
+          - libxslt-dev

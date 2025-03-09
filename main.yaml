@@ -55,6 +55,12 @@
         dest: /etc/sysctl.d/cloudflared.conf
         mode: "644"
       notify: reboot
+    - name: tcp congestion sysctls
+      ansible.builtin.copy:
+        src: sysctl/tcp_congestion_bbr.conf
+        dest: /etc/sysctl.d/tcp_congestion_bbr.conf
+        mode: "644"
+      notify: reboot
     - name: Install kopia
       block:
         - name: Add kopia apt repository

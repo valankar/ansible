@@ -55,11 +55,14 @@
         dest: /etc/sysctl.d/cloudflared.conf
         mode: "644"
       notify: reboot
-    - name: tcp congestion sysctls
-      ansible.builtin.copy:
-        src: sysctl/tcp_congestion_bbr.conf
-        dest: /etc/sysctl.d/tcp_congestion_bbr.conf
-        mode: "644"
+    - name: tcp congestion bbrv3
+      block:
+        - name: kernel image
+          ansible.builtin.apt:
+            deb: https://github.com/Zxilly/bbr-v3-pkg/releases/download/2024-10-08-104853/linux-image-6.4.0-bbrv3_6.4.0-g7542cc7c41c0-1_amd64.deb
+        - name: kernel headers
+          ansible.builtin.apt:
+            deb: https://github.com/Zxilly/bbr-v3-pkg/releases/download/2024-10-08-104853/linux-headers-6.4.0-bbrv3_6.4.0-g7542cc7c41c0-1_amd64.deb
       notify: reboot
     - name: Install kopia
       block:
@@ -114,9 +117,9 @@
       notify: reboot
   handlers:
     - name: reboot
-      ansible.builtin.reboot:
-      # debug:
-      #   msg: Would reboot
+      # ansible.builtin.reboot:
+      debug:
+        msg: Would reboot
 
 - name: Setup dev machines
   hosts: dev

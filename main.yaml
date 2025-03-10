@@ -63,6 +63,9 @@
         - name: kernel headers
           ansible.builtin.apt:
             deb: https://github.com/Zxilly/bbr-v3-pkg/releases/download/2024-10-08-104853/linux-headers-6.4.0-bbrv3_6.4.0-g7542cc7c41c0-1_amd64.deb
+        - name: kernel libc dev
+          ansible.builtin.apt:
+            deb: https://github.com/Zxilly/bbr-v3-pkg/releases/download/2024-10-08-104853/linux-libc-dev_6.4.0-g7542cc7c41c0-1_amd64.deb
       notify: reboot
     - name: Install kopia
       block:

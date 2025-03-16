@@ -41,7 +41,7 @@
           ansible.builtin.blockinfile:
             path: /etc/default/zramswap
             block: |
-              ALGO=zstd
+              ALGO=lzo-rle
               PERCENT=100
         - name: zram sysctls
           ansible.builtin.copy:
@@ -56,16 +56,21 @@
         mode: "644"
       notify: reboot
     - name: tcp congestion bbrv3
+      vars:
+        packages:
+          - linux-image-6.13.7+_6.13.7-g0dcb17718c9c-2_amd64.deb
+          - linux-headers-6.13.7+_6.13.7-g0dcb17718c9c-2_amd64.deb
+          - linux-libc-dev_6.13.7-g0dcb17718c9c-2_amd64.deb
       block:
+        - name: copy kernel image
+          ansible.builtin.copy:
+            src: 'kernel/{{item}}'
+            dest: /root
+          loop: "{{ packages }}"
         - name: kernel image
           ansible.builtin.apt:
-            deb: https://github.com/Zxilly/bbr-v3-pkg/releases/download/2024-10-08-104853/linux-image-6.4.0-bbrv3_6.4.0-g7542cc7c41c0-1_amd64.deb
-        - name: kernel headers
-          ansible.builtin.apt:
-            deb: https://github.com/Zxilly/bbr-v3-pkg/releases/download/2024-10-08-104853/linux-headers-6.4.0-bbrv3_6.4.0-g7542cc7c41c0-1_amd64.deb
-        - name: kernel libc dev
-          ansible.builtin.apt:
-            deb: https://github.com/Zxilly/bbr-v3-pkg/releases/download/2024-10-08-104853/linux-libc-dev_6.4.0-g7542cc7c41c0-1_amd64.deb
+            deb: '/root/{{item}}'
+          loop: "{{ packages }}"
       notify: reboot
     - name: Install kopia
       block:
@@ -131,5 +136,8 @@
       ansible.builtin.apt:
         pkg:
           - clang
+          - debhelper
           - libxml2-dev
           - libxslt-dev
+          - linux-source
+          - lz4

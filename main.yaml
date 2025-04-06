@@ -14,7 +14,6 @@
       unattended_remove_unused_kernel_packages: true
       unattended_automatic_reboot: true
       notify: reboot
-    - role: stefangweichinger.ansible_rclone
   tasks:
     - name: Upgrade packages
       ansible.builtin.apt:
@@ -64,12 +63,12 @@
       block:
         - name: copy kernel image
           ansible.builtin.copy:
-            src: 'kernel/{{item}}'
+            src: "kernel/{{item}}"
             dest: /root
           loop: "{{ packages }}"
         - name: kernel image
           ansible.builtin.apt:
-            deb: '/root/{{item}}'
+            deb: "/root/{{item}}"
           loop: "{{ packages }}"
       notify: reboot
     - name: Install kopia
@@ -86,6 +85,9 @@
             pkg:
               - kopia
             update_cache: true
+    - name: Install rclone
+      ansible.builtin.apt:
+        deb: https://downloads.rclone.org/rclone-current-linux-amd64.deb
     - name: Setup Docker
       block:
         - name: Add docker apt repository

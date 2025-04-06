@@ -4,7 +4,6 @@ Ansible config for new machines.
 
 ```shell
 ansible-galaxy collection install hifis.toolkit
-ansible-galaxy role install stefangweichinger.ansible_rclone
 ```
 
 # Upgrade
@@ -12,7 +11,6 @@ ansible-galaxy role install stefangweichinger.ansible_rclone
 uv lock --upgrade
 uv sync
 ansible-galaxy collection install -U hifis.toolkit
-ansible-galaxy role install stefangweichinger.ansible_rclone --force
 ```
 
 # Run

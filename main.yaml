@@ -48,10 +48,10 @@
             dest: /etc/sysctl.d/zram.conf
             mode: "644"
       notify: reboot
-    - name: cloudflared sysctls
+    - name: tcp buffer sysctls
       ansible.builtin.copy:
-        src: sysctl/cloudflared.conf
-        dest: /etc/sysctl.d/cloudflared.conf
+        src: sysctl/tcp_buffers.conf
+        dest: /etc/sysctl.d/tcp_buffers.conf
         mode: "644"
       notify: reboot
     - name: tcp congestion bbrv3

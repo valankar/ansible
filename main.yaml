@@ -29,6 +29,7 @@
           - emacs-nox
           - jq
           - ledger
+          - rsnapshot
           - rsync
           - sqlite3
           - unzip
@@ -139,7 +140,11 @@
         pkg:
           - clang
           - debhelper
+          - fd-find
+          - fzf
           - libxml2-dev
           - libxslt-dev
           - linux-source
           - lz4
+          - python3-venv
+          - ripgrep

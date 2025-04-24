@@ -29,7 +29,6 @@
           - emacs-nox
           - jq
           - ledger
-          - rsnapshot
           - rsync
           - sqlite3
           - unzip

@@ -48,6 +48,11 @@
             dest: /etc/sysctl.d/zram.conf
             mode: "644"
       notify: reboot
+    - name: sudo without password
+      ansible.builtin.copy:
+        content: "%sudo\tALL=(ALL:ALL) NOPASSWD: ALL\n"
+        dest: /etc/sudoers.d/11-nopasswd
+        mode: "600"
     - name: tcp buffer sysctls
       ansible.builtin.copy:
         src: sysctl/tcp_buffers.conf

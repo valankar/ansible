@@ -1,0 +1,73 @@
+- name: Setup hosts after install
+  hosts: cachyos
+  become: true
+  tasks:
+    - name: Upgrade packages
+      community.general.pacman:
+        update_cache: true
+        upgrade: true
+      notify: Reboot if needed
+    - name: Install packages
+      community.general.pacman:
+        name:
+          - compsize
+          - docker
+          - docker-buildx
+          - docker-compose
+          - neovim
+          - rclone
+          - ripgrep
+          - yay
+      notify: Reboot if needed
+    - name: Enable docker
+      ansible.builtin.systemd:
+        name: docker.service
+        enabled: yes
+      notify: Reboot if needed
+    - name: Add user valankar to docker group
+      ansible.builtin.user:
+        name: valankar
+        groups: docker
+        append: yes
+    - name: Networking sysctl
+      ansible.builtin.copy:
+        dest: /etc/sysctl.d/99-networking.conf
+        mode: "644"
+        content: |
+          # BBRv3
+          net.ipv4.tcp_congestion_control = bbr
+          net.core.default_qdisc = fq
+          # Needed for cloudflared quic:
+          # https://github.com/cloudflare/cloudflared/issues/1176
+          # It may also be needed for BBR:
+          # https://groups.google.com/g/bbr-dev/c/Yj2_WCBtXpQ/m/S2976NUzEQAJ
+          # Note: Setting _default settings affects non-IP sockets as well.
+          net.core.rmem_max=900000000
+          net.core.wmem_max=900000000
+          net.ipv4.tcp_wmem=4096 262144 900000000
+          net.ipv4.tcp_rmem=4096 540000 900000000
+      notify: Reboot if needed
+    - name: sudo without password
+      ansible.builtin.copy:
+        content: "%wheel\tALL=(ALL:ALL) NOPASSWD: ALL\n"
+        dest: /etc/sudoers.d/11-nopasswd
+        mode: "600"
+    # See https://github.com/Jguer/yay/issues/1744
+    - name: Check installed yay packages
+      become: false
+      ansible.builtin.command: pacman -Qm
+      ignore_errors: yes
+      register: installed_packages
+    - name: Install yay packages
+      become: false
+      ansible.builtin.command: "yay --noconfirm --noprogressbar --needed --sync {{ item }}"
+      when: item not in installed_packages.stdout
+      with_items:
+        - kopia-bin
+        - lazydocker-bin
+      notify: Reboot if needed
+  handlers:
+    - name: Reboot if needed
+      ansible.builtin.reboot:
+      # debug:
+      #   msg: Would reboot

@@ -1,6 +1,8 @@
 - name: Setup hosts after install
   hosts: cachyos
   become: true
+  vars:
+    username: valankar
   tasks:
     - name: Upgrade packages
       community.general.pacman:
@@ -24,49 +26,56 @@
         name: docker.service
         enabled: yes
       notify: Reboot if needed
-    - name: Add user valankar to docker group
+    - name: Add user to docker group
       ansible.builtin.user:
-        name: valankar
+        name: "{{ username }}"
         groups: docker
         append: yes
     - name: Ensure bin directory exists
       ansible.builtin.file:
-        path: /home/valankar/bin
+        path: "/home/{{ username }}/bin"
         state: directory
         mode: "755"
-        owner: valankar
-        group: valankar
+        owner: "{{ username }}"
+        group: "{{ username }}"
     - name: Copy package update script
       ansible.builtin.copy:
         src: cachyos/updates.sh
-        dest: /home/valankar/bin/updates.sh
+        dest: "/home/{{ username }}/bin/updates.sh"
         mode: "755"
-        owner: valankar
-        group: valankar
+        owner: "{{ username }}"
+        group: "{{ username }}"
     - name: Ensure user systemd directory exists
       ansible.builtin.file:
-        path: "/home/valankar/.config/systemd/user"
+        path: "/home/{{ username }}/.config/systemd/user"
         state: directory
         mode: "755"
-        owner: valankar
-        group: valankar
+        owner: "{{ username }}"
+        group: "{{ username }}"
     - name: Add systemd user units
       ansible.builtin.copy:
         src: "cachyos/{{ item }}"
-        dest: "/home/valankar/.config/systemd/user/{{ item }}"
+        dest: "/home/{{ username }}/.config/systemd/user/{{ item }}"
         mode: "644"
-        owner: valankar
-        group: valankar
+        owner: "{{ username }}"
+        group: "{{ username }}"
       loop:
         - updates.service
         - updates.timer
+    - name: Check if lingering is enabled
+      ansible.builtin.stat:
+        path: "/var/lib/systemd/linger/{{ username }}"
+      register: linger_file
+      changed_when: false
     - name: Enable linger
-      ansible.builtin.command: "loginctl enable-linger valankar"
-    - name: Get UID of valankar
-      command: id -u valankar
+      ansible.builtin.command: "loginctl enable-linger {{ username }}"
+      when: not linger_file.stat.exists
+    - name: Get UID of user
+      command: "id -u {{ username }}"
       register: user_id
+      changed_when: false
     - name: Enable and start user timer
-      become_user: valankar
+      become_user: "{{ username }}"
       ansible.builtin.systemd_service:
         name: updates.timer
         state: started
@@ -90,6 +99,7 @@
       ansible.builtin.command: pacman -Qm
       ignore_errors: yes
       register: installed_packages
+      changed_when: false
     - name: Install yay packages
       become: false
       ansible.builtin.command: "yay --noconfirm --noprogressbar --needed --sync {{ item }}"

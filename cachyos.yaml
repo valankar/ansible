@@ -29,27 +29,59 @@
         name: valankar
         groups: docker
         append: yes
+    - name: Ensure bin directory exists
+      ansible.builtin.file:
+        path: /home/valankar/bin
+        state: directory
+        mode: "755"
+        owner: valankar
+        group: valankar
+    - name: Copy package update script
+      ansible.builtin.copy:
+        src: cachyos/updates.sh
+        dest: /home/valankar/bin/updates.sh
+        mode: "755"
+        owner: valankar
+        group: valankar
+    - name: Ensure user systemd directory exists
+      ansible.builtin.file:
+        path: "/home/valankar/.config/systemd/user"
+        state: directory
+        mode: "755"
+        owner: valankar
+        group: valankar
+    - name: Add systemd user units
+      ansible.builtin.copy:
+        src: "cachyos/{{ item }}"
+        dest: "/home/valankar/.config/systemd/user/{{ item }}"
+        mode: "644"
+        owner: valankar
+        group: valankar
+      loop:
+        - updates.service
+        - updates.timer
+    - name: Enable linger
+      ansible.builtin.command: "loginctl enable-linger valankar"
+    - name: Get UID of valankar
+      command: id -u valankar
+      register: user_id
+    - name: Enable and start user timer
+      become_user: valankar
+      ansible.builtin.systemd_service:
+        name: updates.timer
+        state: started
+        scope: user
+      environment:
+        XDG_RUNTIME_DIR: "/run/user/{{ user_id.stdout }}"
     - name: Networking sysctl
       ansible.builtin.copy:
+        src: cachyos/99-networking.conf
         dest: /etc/sysctl.d/99-networking.conf
         mode: "644"
-        content: |
-          # BBRv3
-          net.ipv4.tcp_congestion_control = bbr
-          net.core.default_qdisc = fq
-          # Needed for cloudflared quic:
-          # https://github.com/cloudflare/cloudflared/issues/1176
-          # It may also be needed for BBR:
-          # https://groups.google.com/g/bbr-dev/c/Yj2_WCBtXpQ/m/S2976NUzEQAJ
-          # Note: Setting _default settings affects non-IP sockets as well.
-          net.core.rmem_max=900000000
-          net.core.wmem_max=900000000
-          net.ipv4.tcp_wmem=4096 262144 900000000
-          net.ipv4.tcp_rmem=4096 540000 900000000
       notify: Reboot if needed
     - name: sudo without password
       ansible.builtin.copy:
-        content: "%wheel\tALL=(ALL:ALL) NOPASSWD: ALL\n"
+        src: cachyos/11-nopasswd
         dest: /etc/sudoers.d/11-nopasswd
         mode: "600"
     # See https://github.com/Jguer/yay/issues/1744
@@ -65,7 +97,6 @@
       with_items:
         - kopia-bin
         - lazydocker-bin
-      notify: Reboot if needed
   handlers:
     - name: Reboot if needed
       ansible.builtin.reboot:

@@ -1,0 +1,6 @@
+[Unit]
+Description=System updates
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/updates.sh

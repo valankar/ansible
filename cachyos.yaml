@@ -12,6 +12,7 @@
     - name: Install packages
       community.general.pacman:
         name:
+          - byobu
           - compsize
           - docker
           - docker-buildx
@@ -19,6 +20,7 @@
           - neovim
           - rclone
           - ripgrep
+          - zellij
       notify: Reboot if needed
     - name: Enable docker
       ansible.builtin.systemd:

@@ -7,6 +7,7 @@ paru -Syu --noconfirm --noprogressbar | tee $LOGFILE
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"
   sudo reboot
+  exit 0
 fi
 
 echo "No reboot necessary"

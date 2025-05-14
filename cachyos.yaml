@@ -19,7 +19,6 @@
           - neovim
           - rclone
           - ripgrep
-          - yay
       notify: Reboot if needed
     - name: Enable docker
       ansible.builtin.systemd:
@@ -94,15 +93,15 @@
         dest: /etc/sudoers.d/11-nopasswd
         mode: "600"
     # See https://github.com/Jguer/yay/issues/1744
-    - name: Check installed yay packages
+    - name: Check installed AUR packages
       become: false
       ansible.builtin.command: pacman -Qm
       ignore_errors: yes
       register: installed_packages
       changed_when: false
-    - name: Install yay packages
+    - name: Install AUR packages
       become: false
-      ansible.builtin.command: "yay --noconfirm --noprogressbar --needed --sync {{ item }}"
+      ansible.builtin.command: "paru --noconfirm --noprogressbar --needed --sync {{ item }}"
       when: item not in installed_packages.stdout
       with_items:
         - kopia-bin

@@ -2,12 +2,12 @@
 set -e
 
 LOGFILE="$HOME/bin/updates.log"
-yay --noconfirm --noprogressbar | tee $LOGFILE
+paru -Syu --noconfirm --noprogressbar | tee $LOGFILE
 
-if grep -q "nothing to do" $LOGFILE; then
-  echo "No reboot necessary"
-  exit 0
+if grep -q "upgrading" $LOGFILE; then
+  echo "Rebooting due to package updates"
+  sudo reboot
 fi
 
-echo "Rebooting due to package updates"
-sudo reboot
+echo "No reboot necessary"
+exit 0

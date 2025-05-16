@@ -10,7 +10,7 @@
       community.general.pacman:
         update_cache: true
         upgrade: true
-      notify: Reboot if needed
+      notify: Reboot
     - name: Install packages
       community.general.pacman:
         name:
@@ -20,14 +20,13 @@
           - docker-buildx
           - docker-compose
           - neovim
-          - rclone
           - ripgrep
-      notify: Reboot if needed
+      notify: Reboot
     - name: Enable docker
       ansible.builtin.systemd:
         name: docker.service
         enabled: yes
-      notify: Reboot if needed
+      notify: Reboot
     - name: Add user to docker group
       ansible.builtin.user:
         name: "{{ username }}"
@@ -104,24 +103,37 @@
         - kopia-bin
         - lazydocker-bin
   handlers:
-    - name: Reboot if needed
-      ansible.builtin.reboot:
-      # debug:
-      #   msg: Would reboot
+    - import_tasks: handlers/global_handlers.yaml
 
 - name: Setup servers
   hosts:
     - cachyos_server
   become: true
   tasks:
+    - name: Install packages
+      community.general.pacman:
+        name:
+          - rclone
+      notify: Reboot
     - name: Networking sysctl
       ansible.builtin.copy:
         src: cachyos/99-networking.conf
         dest: /etc/sysctl.d/99-networking.conf
         mode: "644"
-      notify: Reboot if needed
+      notify: Reboot
   handlers:
-    - name: Reboot if needed
-      ansible.builtin.reboot:
-      # debug:
-      #   msg: Would reboot
+    - import_tasks: handlers/global_handlers.yaml
+
+- name: Setup dev
+  hosts:
+    - cachyos_dev
+  become: true
+  tasks:
+    - name: Install packages
+      community.general.pacman:
+        name:
+          - lazygit
+          - npm
+      notify: Reboot
+  handlers:
+    - import_tasks: handlers/global_handlers.yaml

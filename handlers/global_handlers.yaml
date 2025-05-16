@@ -1,0 +1,4 @@
+- name: Reboot
+  ansible.builtin.reboot:
+  when: not skip_reboot | default(false)
+

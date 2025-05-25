@@ -133,6 +133,7 @@
       community.general.pacman:
         name:
           - lazygit
+          - mosh
           - npm
       notify: Reboot
   handlers:

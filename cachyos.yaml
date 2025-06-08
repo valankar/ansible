@@ -21,6 +21,7 @@
           - docker-compose
           - neovim
           - ripgrep
+          - unison
       notify: Reboot
     - name: Enable docker
       ansible.builtin.systemd:

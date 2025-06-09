@@ -133,6 +133,7 @@
     - name: Install packages
       community.general.pacman:
         name:
+          - go-task
           - lazygit
           - mosh
           - npm

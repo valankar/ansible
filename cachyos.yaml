@@ -137,6 +137,7 @@
           - lazygit
           - mosh
           - npm
+          - uv
       notify: Reboot
   handlers:
     - import_tasks: handlers/global_handlers.yaml

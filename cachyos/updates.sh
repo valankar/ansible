@@ -3,6 +3,7 @@ set -e
 
 LOGFILE="$HOME/bin/updates.log"
 paru -Syu --noconfirm --noprogressbar | tee $LOGFILE
+paru -Sc --noconfirm | tee -a $LOGFILE
 
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"

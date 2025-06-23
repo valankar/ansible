@@ -113,7 +113,7 @@
             update_cache: true
         - name: Setup Docker config
           ansible.builtin.copy:
-            src: docker_daemon.json
+            src: debian/docker_daemon.json
             dest: /etc/docker/daemon.json
             directory_mode: "755"
             mode: "644"

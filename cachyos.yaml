@@ -1,7 +1,6 @@
 - name: Setup hosts after install
   hosts:
     - cachyos_server
-    - cachyos_dev
   become: true
   vars:
     username: valankar
@@ -14,13 +13,19 @@
     - name: Install packages
       community.general.pacman:
         name:
-          - byobu
           - compsize
           - docker
           - docker-buildx
           - docker-compose
+          - go-task
+          - lazygit
           - neovim
+          - npm
+          - powerline
+          - rclone
           - ripgrep
+          - tmux
+          - uv
           - unison
       notify: Reboot
     - name: Enable docker
@@ -82,6 +87,7 @@
         name: updates.timer
         state: started
         scope: user
+        enabled: true
       environment:
         XDG_RUNTIME_DIR: "/run/user/{{ user_id.stdout }}"
     - name: sudo without password
@@ -103,47 +109,11 @@
       with_items:
         - kopia-bin
         - lazydocker-bin
-    - name: Setup Docker config
-      ansible.builtin.copy:
-        src: cachyos/docker_daemon.json
-        dest: /etc/docker/daemon.json
-        directory_mode: "755"
-        mode: "644"
-  handlers:
-    - import_tasks: handlers/global_handlers.yaml
-
-- name: Setup servers
-  hosts:
-    - cachyos_server
-  become: true
-  tasks:
-    - name: Install packages
-      community.general.pacman:
-        name:
-          - rclone
-      notify: Reboot
     - name: Networking sysctl
       ansible.builtin.copy:
         src: cachyos/99-networking.conf
         dest: /etc/sysctl.d/99-networking.conf
         mode: "644"
-      notify: Reboot
-  handlers:
-    - import_tasks: handlers/global_handlers.yaml
-
-- name: Setup dev
-  hosts:
-    - cachyos_dev
-  become: true
-  tasks:
-    - name: Install packages
-      community.general.pacman:
-        name:
-          - go-task
-          - lazygit
-          - mosh
-          - npm
-          - uv
       notify: Reboot
   handlers:
     - import_tasks: handlers/global_handlers.yaml

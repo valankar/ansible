@@ -25,6 +25,7 @@
           - rclone
           - ripgrep
           - tmux
+          - tmuxp
           - uv
           - unison
       notify: Reboot

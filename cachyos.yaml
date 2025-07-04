@@ -24,6 +24,7 @@
           - powerline
           - rclone
           - ripgrep
+          - sshfs
           - tmux
           - tmuxp
           - uv

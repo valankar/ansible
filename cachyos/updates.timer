@@ -2,9 +2,8 @@
 Description=System updates
 
 [Timer]
-OnCalendar=daily
+OnCalendar=*-*-* 00:30:00
 Persistent=true
-RandomizedDelaySec=1h
 
 [Install]
 WantedBy=timers.target

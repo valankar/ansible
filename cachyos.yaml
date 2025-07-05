@@ -88,9 +88,9 @@
       when: not item.stat.exists
       loop: "{{ linger_file.results }}"
     - name: Get UID of user
-      command: "id -u {{ username }}"
-      register: user_id
-      changed_when: false
+      getent:
+        database: passwd
+        key: "{{ username }}"
     - name: Enable and start user timer
       become_user: "{{ username }}"
       ansible.builtin.systemd_service:
@@ -99,7 +99,7 @@
         scope: user
         enabled: true
       environment:
-        XDG_RUNTIME_DIR: "/run/user/{{ user_id.stdout }}"
+        XDG_RUNTIME_DIR: "/run/user/{{ ansible_facts.getent_passwd[username][1] }}"
     - name: sudo without password
       ansible.builtin.copy:
         src: cachyos/11-nopasswd

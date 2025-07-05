@@ -4,6 +4,7 @@
   become: true
   vars:
     username: valankar
+    dev_username: valankar-dev
   tasks:
     - name: Upgrade packages
       community.general.pacman:
@@ -35,11 +36,16 @@
         name: docker.service
         enabled: yes
       notify: Reboot
-    - name: Add user to docker group
+    - name: Add dev user
       ansible.builtin.user:
-        name: "{{ username }}"
+        name: "{{ dev_username }}"
+        shell: /bin/fish
+    - name: Add users to docker group
+      ansible.builtin.user:
+        name: "{{ item }}"
         groups: docker
         append: yes
+      loop: [ "{{ username }}", "{{ dev_username }}"]
     - name: Ensure user bin directory exists
       ansible.builtin.file:
         path: "/home/{{ username }}/bin"
@@ -73,12 +79,14 @@
         - updates.timer
     - name: Check if lingering is enabled
       ansible.builtin.stat:
-        path: "/var/lib/systemd/linger/{{ username }}"
+        path: "/var/lib/systemd/linger/{{ item }}"
       register: linger_file
       changed_when: false
+      loop: [ "{{ username }}", "{{ dev_username }}"]
     - name: Enable linger
-      ansible.builtin.command: "loginctl enable-linger {{ username }}"
-      when: not linger_file.stat.exists
+      ansible.builtin.command: "loginctl enable-linger {{ item.item }}"
+      when: not item.stat.exists
+      loop: "{{ linger_file.results }}"
     - name: Get UID of user
       command: "id -u {{ username }}"
       register: user_id

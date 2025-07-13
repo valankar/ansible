@@ -31,6 +31,12 @@
           - uv
           - unison
       notify: Reboot
+    - name: Disable password SSH
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        search_string: '#PasswordAuthentication yes'
+        line: 'PasswordAuthentication no'
+      notify: Reboot
     - name: Enable docker
       ansible.builtin.systemd:
         name: docker.service

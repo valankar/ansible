@@ -15,6 +15,7 @@
       community.general.pacman:
         name:
           - compsize
+          - ctop
           - docker
           - docker-buildx
           - docker-compose

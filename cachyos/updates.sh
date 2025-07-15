@@ -3,7 +3,8 @@ set -e
 
 LOGFILE="$HOME/bin/updates.log"
 paru -Syu --noconfirm --noprogressbar | tee $LOGFILE
-paru -Sc --noconfirm | tee -a $LOGFILE
+# --noconfirm skips cleaning package cache, so use 'yes'
+yes | paru -Sccd | tee -a $LOGFILE
 if command -v flatpak >/dev/null; then
   flatpak update --noninteractive -y | tee -a $LOGFILE
 fi

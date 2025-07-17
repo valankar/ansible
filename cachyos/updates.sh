@@ -11,7 +11,11 @@ fi
 
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"
-  sudo reboot
+  if [ "$XDG_CURRENT_DESKTOP" = "KDE" ]; then
+    qdbus6 org.kde.Shutdown /Shutdown org.kde.Shutdown.logoutAndReboot
+  else
+    sudo reboot
+  fi
   exit 0
 fi
 

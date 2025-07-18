@@ -1,11 +1,12 @@
 # /etc/systemd/system/kopia.service
 [Unit]
 Description=Kopia backups
-Requires=network-online.target
+Wants=network-online.target
 After=network-online.target
 
 [Service]
 Type=oneshot
 User=root
+ExecStartPre=sleep 1m
 ExecStart=kopia snapshot create --all --no-progress --log-level=error --file-log-level=error
 #ExecStartPost=curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/...

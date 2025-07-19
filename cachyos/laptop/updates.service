@@ -1,0 +1,11 @@
+# /etc/systemd/system/updates.service
+[Unit]
+Description=System updates
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=valankar
+ExecStartPre=sleep 1m
+ExecStart=/home/valankar/bin/updates.sh

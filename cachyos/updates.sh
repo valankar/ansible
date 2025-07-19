@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+if systemctl list-unit-files kopia.service >/dev/null; then
+  echo "Running kopia"
+  sudo systemctl start kopia
+fi
+
 LOGFILE="$HOME/bin/updates.log"
 paru -Syu --noconfirm --noprogressbar | tee $LOGFILE
 # --noconfirm skips cleaning package cache, so use 'yes'

@@ -15,6 +15,7 @@
       community.general.pacman:
         name:
           - compsize
+          - distrobox
           - docker
           - docker-buildx
           - docker-compose

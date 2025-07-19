@@ -10,6 +10,6 @@ tasks:
     deps:
       - task: common:update-packages
     cmds:
-      - git push -u origin master
+      - git push
     sources:
       - uv.lock

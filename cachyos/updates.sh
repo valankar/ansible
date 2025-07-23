@@ -11,7 +11,7 @@ paru -Syu --noconfirm --noprogressbar | tee $LOGFILE
 # --noconfirm skips cleaning package cache, so use 'yes'
 yes | paru -Sccd | tee -a $LOGFILE
 if command -v flatpak >/dev/null; then
-  flatpak update --noninteractive -y | tee -a $LOGFILE
+  sudo flatpak update --noninteractive -y | tee -a $LOGFILE
 fi
 
 if grep -q "upgrading" $LOGFILE; then

@@ -7,11 +7,11 @@ if systemctl list-unit-files kopia.service >/dev/null; then
 fi
 
 LOGFILE="$HOME/bin/updates.log"
-paru -Syu --noconfirm --noprogressbar | tee $LOGFILE
+paru -Syu --noconfirm --noprogressbar 2>&1 | tee $LOGFILE
 # --noconfirm skips cleaning package cache, so use 'yes'
-yes | paru -Sccd | tee -a $LOGFILE
+yes | paru -Sccd 2>&1 | tee -a $LOGFILE
 if command -v flatpak >/dev/null; then
-  sudo flatpak update --noninteractive -y | tee -a $LOGFILE
+  sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
 fi
 
 if grep -q "upgrading" $LOGFILE; then

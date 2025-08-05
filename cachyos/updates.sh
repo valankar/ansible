@@ -16,11 +16,13 @@ fi
 
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"
-  if [ "$XDG_CURRENT_DESKTOP" = "KDE" ]; then
-    qdbus6 org.kde.Shutdown /Shutdown org.kde.Shutdown.logoutAndReboot
-  else
-    sudo reboot
-  fi
+  if pgrep plasmashell >/dev/null; then
+    export DISPLAY=:0
+    export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+    if qdbus6 org.kde.Shutdown /Shutdown org.kde.Shutdown.logoutAndReboot; then
+      exit 0
+    fi
+  sudo reboot
   exit 0
 fi
 

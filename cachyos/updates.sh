@@ -22,6 +22,7 @@ if grep -q "upgrading" $LOGFILE; then
     if qdbus6 org.kde.Shutdown /Shutdown org.kde.Shutdown.logoutAndReboot; then
       exit 0
     fi
+  fi
   sudo reboot
   exit 0
 fi

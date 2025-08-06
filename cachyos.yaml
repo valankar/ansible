@@ -19,6 +19,7 @@
           - docker
           - docker-buildx
           - docker-compose
+          - dua-cli
           - go-task
           - lazygit
           - neovim

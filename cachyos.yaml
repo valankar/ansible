@@ -75,6 +75,13 @@
         mode: "755"
         owner: "{{ username }}"
         group: "{{ username }}"
+    - name: Add systemd kopia unit
+      ansible.builtin.copy:
+        src: "cachyos/kopia.service"
+        dest: "/etc/systemd/system/kopia.service"
+        mode: "644"
+        owner: "root"
+        group: "root"
     - name: Add systemd user units
       ansible.builtin.copy:
         src: "cachyos/{{ item }}"

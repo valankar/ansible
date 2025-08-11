@@ -53,6 +53,8 @@
     dua
     duf
     fd
+    fzf
+    gcc
     git
     go-task
     kopia
@@ -84,6 +86,7 @@
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
 
+  security.sudo.wheelNeedsPassword = false;
   zramSwap.enable = true;
   virtualisation.docker = {
     enable = true;

@@ -41,13 +41,20 @@
   users.users.valankar = {
     isNormalUser = true;
     description = "Viraj Alankar";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ "networkmanager" "wheel" "docker"];
+    packages = with pkgs; [];
+  };
+  users.users.valankar-dev = {
+    isNormalUser = true;
+    description = "Viraj Alankar Development";
+    extraGroups = [ "docker"];
     packages = with pkgs; [];
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    bat
     btop
     distrobox
     dua
@@ -90,18 +97,15 @@
   zramSwap.enable = true;
   virtualisation.docker = {
     enable = true;
-    rootless = {
-      enable = true;
-      setSocketVariable = true;
-    };
     autoPrune.enable = true;
   };
   system.autoUpgrade.enable = true;
   system.autoUpgrade.allowReboot = true;
   nix.gc = {
     automatic = true;
-    options = "--delete-older-than 30d";
+    options = "--delete-older-than 7d";
   };
+  nix.optimise.automatic = true;
   boot.kernel.sysctl."net.core.rmem_max" = 7500000;
   boot.kernel.sysctl."net.core.wmem_max" = 7500000;
 

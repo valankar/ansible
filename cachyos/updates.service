@@ -4,4 +4,3 @@ Description=System updates
 [Service]
 Type=oneshot
 ExecStart=%h/bin/updates.sh
-#ExecStartPost=curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/...

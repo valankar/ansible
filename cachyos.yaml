@@ -77,7 +77,7 @@
         group: "{{ username }}"
     - name: Add systemd kopia unit
       ansible.builtin.copy:
-        src: "cachyos/kopia.service"
+        src: "common/kopia.service"
         dest: "/etc/systemd/system/kopia.service"
         mode: "644"
         owner: "root"
@@ -117,7 +117,7 @@
         XDG_RUNTIME_DIR: "/run/user/{{ ansible_facts.getent_passwd[username][1] }}"
     - name: sudo without password
       ansible.builtin.copy:
-        src: cachyos/11-nopasswd
+        src: common/11-nopasswd
         dest: /etc/sudoers.d/11-nopasswd
         mode: "600"
     # See https://github.com/Jguer/yay/issues/1744
@@ -136,7 +136,7 @@
         - lazydocker-bin
     - name: Networking sysctl
       ansible.builtin.copy:
-        src: cachyos/99-networking.conf
+        src: common/99-networking.conf
         dest: /etc/sysctl.d/99-networking.conf
         mode: "644"
       notify: Reboot

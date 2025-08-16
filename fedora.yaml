@@ -80,8 +80,8 @@
         group: "{{ username }}"
     - name: Add systemd kopia unit
       ansible.builtin.copy:
-        src: "cachyos/kopia.service"
-        dest: "/etc/systemd/system/kopia.service"
+        src: common/kopia.service
+        dest: /etc/systemd/system/kopia.service
         mode: "644"
         owner: "root"
         group: "root"
@@ -97,12 +97,12 @@
       loop: "{{ linger_file.results }}"
     - name: sudo without password
       ansible.builtin.copy:
-        src: cachyos/11-nopasswd
+        src: common/11-nopasswd
         dest: /etc/sudoers.d/11-nopasswd
         mode: "600"
     - name: Networking sysctl
       ansible.builtin.copy:
-        src: cachyos/99-networking.conf
+        src: common/99-networking.conf
         dest: /etc/sysctl.d/99-networking.conf
         mode: "644"
       notify: Reboot

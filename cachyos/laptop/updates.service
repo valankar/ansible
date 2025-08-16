@@ -1,4 +1,5 @@
 # /etc/systemd/system/updates.service
+# This is installed as root because network-online.target is not available for user systemd.
 [Unit]
 Description=System updates
 Wants=network-online.target

@@ -1,0 +1,21 @@
+btop
+docker-cli containerd docker-compose
+dnf-automatic
+
+bat
+distrobox
+duf
+dua-cli
+fish
+fd-find
+fzf
+git
+neovim
+tmux tmux-powerline python-tmuxp
+uv
+vim
+
+dnf copr enable atim/lazydocker
+dnf install lazydocker
+dnf copr enable dejan/lazygit
+dnf install lazygit

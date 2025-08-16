@@ -1,0 +1,110 @@
+- name: Setup hosts after install
+  hosts:
+    - fedora_server
+  become: true
+  vars:
+    username: valankar
+    dev_username: valankar-dev
+  tasks:
+    - name: Upgrade packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+      notify: Reboot
+    - name: Setup copr
+      community.general.copr:
+        name: "{{ item }}"
+      loop:
+        - atim/lazydocker
+        - dejan/lazygit
+    - name: Kopia repo
+      ansible.builtin.yum_repository:
+        name: Kopia
+        description: Kopia
+        baseurl: http://packages.kopia.io/rpm/stable/$basearch/
+        gpgkey: https://kopia.io/signing-key
+        gpgcheck: true
+    - name: Install packages
+      ansible.builtin.dnf:
+        name:
+          - bat
+          - btop
+          - containerd
+          - distrobox
+          - dnf-automatic
+          - docker-cli
+          - docker-compose
+          - dua-cli
+          - duf
+          - fd-find
+          - fish
+          - fzf
+          - git
+          - kopia
+          - lazydocker
+          - lazygit
+          - neovim
+          - python-tmuxp
+          - tmux
+          - tmux-powerline
+          - uv
+          - vim
+      notify: Reboot
+    - name: Enable docker
+      ansible.builtin.systemd:
+        name: docker.service
+        enabled: yes
+      notify: Reboot
+    - name: Add users to docker group and set fish shell
+      ansible.builtin.user:
+        name: "{{ item }}"
+        shell: /bin/fish
+        groups: docker
+        append: yes
+        generate_ssh_key: true
+      loop: [ "{{ username }}", "{{ dev_username }}"]
+    - name: Ensure user bin directory exists
+      ansible.builtin.file:
+        path: "/home/{{ item }}/bin"
+        state: directory
+        mode: "755"
+        owner: "{{ item }}"
+        group: "{{ item }}"
+      loop: [ "{{ username }}", "{{ dev_username }}"]
+    - name: Ensure user systemd directory exists
+      ansible.builtin.file:
+        path: "/home/{{ username }}/.config/systemd/user"
+        state: directory
+        mode: "755"
+        owner: "{{ username }}"
+        group: "{{ username }}"
+    - name: Add systemd kopia unit
+      ansible.builtin.copy:
+        src: "cachyos/kopia.service"
+        dest: "/etc/systemd/system/kopia.service"
+        mode: "644"
+        owner: "root"
+        group: "root"
+    - name: Check if lingering is enabled
+      ansible.builtin.stat:
+        path: "/var/lib/systemd/linger/{{ item }}"
+      register: linger_file
+      changed_when: false
+      loop: [ "{{ username }}", "{{ dev_username }}"]
+    - name: Enable linger
+      ansible.builtin.command: "loginctl enable-linger {{ item.item }}"
+      when: not item.stat.exists
+      loop: "{{ linger_file.results }}"
+    - name: sudo without password
+      ansible.builtin.copy:
+        src: cachyos/11-nopasswd
+        dest: /etc/sudoers.d/11-nopasswd
+        mode: "600"
+    - name: Networking sysctl
+      ansible.builtin.copy:
+        src: cachyos/99-networking.conf
+        dest: /etc/sysctl.d/99-networking.conf
+        mode: "644"
+      notify: Reboot
+  handlers:
+    - import_tasks: handlers/global_handlers.yaml

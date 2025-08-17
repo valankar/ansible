@@ -77,11 +77,12 @@
       ansible.builtin.user:
         name: "{{ dev_username }}"
         shell: /bin/fish
-    - name: Add users to docker group
+    - name: Add users to docker group and generate ssh key
       ansible.builtin.user:
         name: "{{ item }}"
         groups: docker
         append: yes
+        generate_ssh_key: true
       loop: [ "{{ username }}", "{{ dev_username }}"]
     - name: Ensure user bin directory exists
       ansible.builtin.file:

@@ -99,7 +99,7 @@
         name: docker.service
         enabled: yes
       notify: Reboot
-    - name: Add users to docker group and set fish shell
+    - name: Add users to docker group, generate ssh key, set fish shell
       ansible.builtin.user:
         name: "{{ item }}"
         shell: /bin/fish

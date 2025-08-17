@@ -50,6 +50,23 @@
           - uv
           - vim
       notify: Reboot
+    - name: Enable automatic updates
+      block:
+        - name: Setup config file
+          ansible.builtin.copy:
+            dest: /etc/dnf/automatic.conf
+            mode: "644"
+            owner: "root"
+            group: "root"
+            content: |
+              [commands]
+              apply_updates = yes
+              reboot = when-changed
+        - name: Enable systemd service
+          ansible.builtin.systemd:
+            name: dnf-automatic.timer
+            enabled: yes
+      notify: Reboot
     - name: Enable docker
       ansible.builtin.systemd:
         name: docker.service

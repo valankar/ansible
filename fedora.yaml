@@ -67,6 +67,24 @@
             name: dnf-automatic.timer
             enabled: yes
       notify: Reboot
+    - name: sudo without password
+      ansible.builtin.copy:
+        src: common/11-nopasswd
+        dest: /etc/sudoers.d/11-nopasswd
+        mode: "600"
+    - name: Networking sysctl
+      ansible.builtin.copy:
+        src: common/99-networking.conf
+        dest: /etc/sysctl.d/99-networking.conf
+        mode: "644"
+      notify: Reboot
+    - name: Add systemd kopia unit
+      ansible.builtin.copy:
+        src: common/kopia.service
+        dest: /etc/systemd/system/kopia.service
+        mode: "644"
+        owner: "root"
+        group: "root"
     - name: Enable docker
       ansible.builtin.systemd:
         name: docker.service
@@ -95,13 +113,6 @@
         mode: "755"
         owner: "{{ username }}"
         group: "{{ username }}"
-    - name: Add systemd kopia unit
-      ansible.builtin.copy:
-        src: common/kopia.service
-        dest: /etc/systemd/system/kopia.service
-        mode: "644"
-        owner: "root"
-        group: "root"
     - name: Check if lingering is enabled
       ansible.builtin.stat:
         path: "/var/lib/systemd/linger/{{ item }}"
@@ -112,16 +123,24 @@
       ansible.builtin.command: "loginctl enable-linger {{ item.item }}"
       when: not item.stat.exists
       loop: "{{ linger_file.results }}"
-    - name: sudo without password
-      ansible.builtin.copy:
-        src: common/11-nopasswd
-        dest: /etc/sudoers.d/11-nopasswd
-        mode: "600"
-    - name: Networking sysctl
-      ansible.builtin.copy:
-        src: common/99-networking.conf
-        dest: /etc/sysctl.d/99-networking.conf
-        mode: "644"
-      notify: Reboot
+    - name: Setup tmux config
+      block:
+      - name: Ensure user tmux config directory exists
+        ansible.builtin.file:
+          path: "/home/{{ username }}/.config/tmux"
+          state: directory
+          mode: "755"
+          owner: "{{ username }}"
+          group: "{{ username }}"
+      - name: Copy tmux config
+        ansible.builtin.copy:
+          dest: "/home/{{ username }}/.config/tmux/tmux.conf"
+          mode: "644"
+          owner: "{{ username }}"
+          group: "{{ username }}"
+          content: |
+            source /usr/share/tmux/powerline.conf
+            set -g mouse on
+            set-option -g mode-keys vi
   handlers:
     - import_tasks: handlers/global_handlers.yaml

@@ -3,7 +3,8 @@ set -e
 
 if systemctl list-unit-files kopia.service >/dev/null; then
   echo "Running kopia"
-  sudo systemctl start kopia
+  # Setup kopia and uncomment
+  # sudo systemctl start kopia
 fi
 
 LOGFILE="$HOME/bin/updates.log"

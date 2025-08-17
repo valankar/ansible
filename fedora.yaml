@@ -40,13 +40,16 @@
           - fish
           - fzf
           - git
+          - go-task
           - kopia
           - lazydocker
           - lazygit
           - neovim
           - python-tmuxp
+          - rclone
           - tmux
           - tmux-powerline
+          - unison
           - uv
           - vim
       notify: Reboot
@@ -66,6 +69,12 @@
           ansible.builtin.systemd:
             name: dnf-automatic.timer
             enabled: yes
+      notify: Reboot
+    - name: Disable password SSH
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        search_string: '#PasswordAuthentication yes'
+        line: 'PasswordAuthentication no'
       notify: Reboot
     - name: sudo without password
       ansible.builtin.copy:

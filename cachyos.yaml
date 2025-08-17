@@ -1,3 +1,8 @@
+# Select no desktop, remove firefox.
+# After setup:
+# systemctl enable sshd
+# ufw disable
+# reboot
 - name: Setup hosts after install
   hosts:
     - cachyos_server
@@ -32,11 +37,36 @@
           - uv
           - unison
       notify: Reboot
+    - name: sudo without password
+      ansible.builtin.copy:
+        src: common/11-nopasswd
+        dest: /etc/sudoers.d/11-nopasswd
+        mode: "600"
+    # See https://github.com/Jguer/yay/issues/1744
+    - name: Check installed AUR packages
+      become: false
+      ansible.builtin.command: pacman -Qm
+      ignore_errors: yes
+      register: installed_packages
+      changed_when: false
+    - name: Install AUR packages
+      become: false
+      ansible.builtin.command: "paru --noconfirm --noprogressbar --needed --sync {{ item }}"
+      when: item not in installed_packages.stdout
+      with_items:
+        - kopia-bin
+        - lazydocker-bin
     - name: Disable password SSH
       ansible.builtin.lineinfile:
         path: /etc/ssh/sshd_config
         search_string: '#PasswordAuthentication yes'
         line: 'PasswordAuthentication no'
+      notify: Reboot
+    - name: Networking sysctl
+      ansible.builtin.copy:
+        src: common/99-networking.conf
+        dest: /etc/sysctl.d/99-networking.conf
+        mode: "644"
       notify: Reboot
     - name: Enable docker
       ansible.builtin.systemd:
@@ -114,30 +144,24 @@
         enabled: true
       environment:
         XDG_RUNTIME_DIR: "/run/user/{{ ansible_facts.getent_passwd[username][1] }}"
-    - name: sudo without password
-      ansible.builtin.copy:
-        src: common/11-nopasswd
-        dest: /etc/sudoers.d/11-nopasswd
-        mode: "600"
-    # See https://github.com/Jguer/yay/issues/1744
-    - name: Check installed AUR packages
-      become: false
-      ansible.builtin.command: pacman -Qm
-      ignore_errors: yes
-      register: installed_packages
-      changed_when: false
-    - name: Install AUR packages
-      become: false
-      ansible.builtin.command: "paru --noconfirm --noprogressbar --needed --sync {{ item }}"
-      when: item not in installed_packages.stdout
-      with_items:
-        - kopia-bin
-        - lazydocker-bin
-    - name: Networking sysctl
-      ansible.builtin.copy:
-        src: common/99-networking.conf
-        dest: /etc/sysctl.d/99-networking.conf
-        mode: "644"
-      notify: Reboot
+    - name: Setup tmux config
+      block:
+      - name: Ensure user tmux config directory exists
+        ansible.builtin.file:
+          path: "/home/{{ username }}/.config/tmux"
+          state: directory
+          mode: "755"
+          owner: "{{ username }}"
+          group: "{{ username }}"
+      - name: Copy tmux config
+        ansible.builtin.copy:
+          dest: "/home/{{ username }}/.config/tmux/tmux.conf"
+          mode: "644"
+          owner: "{{ username }}"
+          group: "{{ username }}"
+          content: |
+            source /usr/share/powerline/bindings/tmux/powerline.conf
+            set -g mouse on
+            set-option -g mode-keys vi
   handlers:
     - import_tasks: handlers/global_handlers.yaml

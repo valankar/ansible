@@ -5,6 +5,7 @@
   vars:
     username: valankar
     dev_username: valankar-dev
+    tmux_powerline: /usr/share/tmux/powerline.conf
   tasks:
     - name: Upgrade packages
       ansible.builtin.dnf:
@@ -70,86 +71,6 @@
             name: dnf-automatic.timer
             enabled: yes
       notify: Reboot
-    - name: Disable password SSH
-      ansible.builtin.lineinfile:
-        path: /etc/ssh/sshd_config
-        search_string: '#PasswordAuthentication yes'
-        line: 'PasswordAuthentication no'
-      notify: Reboot
-    - name: sudo without password
-      ansible.builtin.copy:
-        src: common/11-nopasswd
-        dest: /etc/sudoers.d/11-nopasswd
-        mode: "600"
-    - name: Networking sysctl
-      ansible.builtin.copy:
-        src: common/99-networking.conf
-        dest: /etc/sysctl.d/99-networking.conf
-        mode: "644"
-      notify: Reboot
-    - name: Add systemd kopia unit
-      ansible.builtin.copy:
-        src: common/kopia.service
-        dest: /etc/systemd/system/kopia.service
-        mode: "644"
-        owner: "root"
-        group: "root"
-    - name: Enable docker
-      ansible.builtin.systemd:
-        name: docker.service
-        enabled: yes
-      notify: Reboot
-    - name: Add users to docker group, generate ssh key, set fish shell
-      ansible.builtin.user:
-        name: "{{ item }}"
-        shell: /bin/fish
-        groups: docker
-        append: yes
-        generate_ssh_key: true
-      loop: [ "{{ username }}", "{{ dev_username }}"]
-    - name: Ensure user bin directory exists
-      ansible.builtin.file:
-        path: "/home/{{ item }}/bin"
-        state: directory
-        mode: "755"
-        owner: "{{ item }}"
-        group: "{{ item }}"
-      loop: [ "{{ username }}", "{{ dev_username }}"]
-    - name: Ensure user systemd directory exists
-      ansible.builtin.file:
-        path: "/home/{{ username }}/.config/systemd/user"
-        state: directory
-        mode: "755"
-        owner: "{{ username }}"
-        group: "{{ username }}"
-    - name: Check if lingering is enabled
-      ansible.builtin.stat:
-        path: "/var/lib/systemd/linger/{{ item }}"
-      register: linger_file
-      changed_when: false
-      loop: [ "{{ username }}", "{{ dev_username }}"]
-    - name: Enable linger
-      ansible.builtin.command: "loginctl enable-linger {{ item.item }}"
-      when: not item.stat.exists
-      loop: "{{ linger_file.results }}"
-    - name: Setup tmux config
-      block:
-      - name: Ensure user tmux config directory exists
-        ansible.builtin.file:
-          path: "/home/{{ username }}/.config/tmux"
-          state: directory
-          mode: "755"
-          owner: "{{ username }}"
-          group: "{{ username }}"
-      - name: Copy tmux config
-        ansible.builtin.copy:
-          dest: "/home/{{ username }}/.config/tmux/tmux.conf"
-          mode: "644"
-          owner: "{{ username }}"
-          group: "{{ username }}"
-          content: |
-            source /usr/share/tmux/powerline.conf
-            set -g mouse on
-            set-option -g mode-keys vi
+    - import_tasks: common/tasks.yaml
   handlers:
-    - import_tasks: handlers/global_handlers.yaml
+    - import_tasks: common/global_handlers.yaml

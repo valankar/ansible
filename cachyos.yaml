@@ -35,6 +35,7 @@
           - powerline
           - rclone
           - ripgrep
+          - strace
           - tmux
           - tmuxp
           - uv

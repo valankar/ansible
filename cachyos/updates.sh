@@ -7,14 +7,7 @@ if systemctl list-unit-files kopia.service >/dev/null; then
 fi
 
 LOGFILE="$HOME/bin/updates.log"
-paru -Syu --noconfirm --noprogressbar 2>&1 | tee $LOGFILE
-# --noconfirm skips cleaning package cache, so use 'yes'
-yes | paru -Sccd 2>&1 | tee -a $LOGFILE
-# https://gitlab.archlinux.org/pacman/pacman/-/issues/297
-sudo find /var/cache/pacman/pkg/ -mindepth 1 -type d -empty -delete
-if command -v flatpak >/dev/null; then
-  sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
-fi
+yes | arch-update 2>&1 | tee $LOGFILE
 
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"

@@ -65,6 +65,13 @@
         mode: "755"
         owner: "{{ username }}"
         group: "{{ username }}"
+    - name: Copy arch-update config
+      ansible.builtin.copy:
+        src: cachyos/arch-update.conf
+        dest: "/home/{{ username }}/.config/arch-update/arch-update.conf"
+        mode: "644"
+        owner: "{{ username }}"
+        group: "{{ username }}"
     - name: Add systemd user units
       ansible.builtin.copy:
         src: "cachyos/{{ item }}"

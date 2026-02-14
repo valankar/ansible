@@ -8,6 +8,7 @@ After=network-online.target
 [Service]
 Type=oneshot
 User=valankar
+ExecStartPre=sleep 1m
 ExecStart=/home/valankar/bin/updates.sh
 Restart=on-failure
-RestartSec=60s
+RestartSec=1m

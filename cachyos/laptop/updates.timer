@@ -1,4 +1,3 @@
-# /etc/systemd/system/updates.timer
 [Unit]
 Description=System updates
 

@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+nm-online -t 60
 if systemctl list-unit-files kopia.service >/dev/null; then
   echo "Running kopia"
   sudo systemctl start kopia

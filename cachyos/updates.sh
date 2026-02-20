@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 
-nm-online -t 60
+until host google.com &>/dev/null; do
+  echo "Waiting for DNS..."
+  sleep 2
+done
 if systemctl list-unit-files kopia.service >/dev/null; then
   echo "Running kopia"
   sudo systemctl start kopia

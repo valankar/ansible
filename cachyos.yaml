@@ -58,6 +58,7 @@
       with_items:
         - kopia-bin
         - lazydocker-bin
+        - opencode-bin
     - name: Copy package update script
       ansible.builtin.copy:
         src: cachyos/updates.sh

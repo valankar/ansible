@@ -12,6 +12,10 @@ fi
 
 LOGFILE="$HOME/bin/updates.log"
 yes | arch-update 2>&1 | tee $LOGFILE
+# Flatpak does not seem to work with yes.
+if command -v flatpak >/dev/null; then
+  sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
+fi
 
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"

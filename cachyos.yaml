@@ -29,6 +29,7 @@
           - docker-buildx
           - docker-compose
           - dua-cli
+          - ghostty-terminfo
           - go-task
           - lazygit
           - neovim

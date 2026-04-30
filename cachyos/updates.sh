@@ -11,11 +11,12 @@ if systemctl list-unit-files kopia.service >/dev/null; then
 fi
 
 LOGFILE="$HOME/bin/updates.log"
-yes | arch-update 2>&1 | tee $LOGFILE
+rm $LOGFILE
 # Flatpak does not seem to work with yes.
 if command -v flatpak >/dev/null; then
   sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
 fi
+yes | arch-update 2>&1 | tee -a $LOGFILE
 
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"

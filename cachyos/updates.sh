@@ -17,6 +17,8 @@ if command -v flatpak >/dev/null; then
   sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
 fi
 yes | arch-update 2>&1 | tee -a $LOGFILE
+# Cleanup cache
+yes | paru -Scc 2>&1 | tee -a $LOGFILE
 
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"

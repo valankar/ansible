@@ -24,3 +24,13 @@ ansible-playbook -i inventory.ini cachyos.yaml --ask-become-pass --limit 192.168
 # Dry Run
 ansible-playbook -i inventory.ini cachyos.yaml --ask-become-pass --check --diff --limit localhost
 ```
+
+# alpine incus host
+
+```shell
+apk -U upgrade
+apk add incus incus-client fuse3
+
+doas rc-update add incusd
+doas rc-update add fuse
+```

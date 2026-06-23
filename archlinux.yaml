@@ -27,6 +27,7 @@
           - docker-compose
           - dua-cli
           - fish
+          - fuse3
           - ghostty-terminfo
           - git
           - go-task

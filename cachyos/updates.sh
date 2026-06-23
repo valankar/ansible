@@ -11,7 +11,7 @@ if systemctl list-unit-files kopia.service >/dev/null; then
 fi
 
 LOGFILE="$HOME/bin/updates.log"
-rm $LOGFILE
+rm -f $LOGFILE
 # Flatpak does not seem to work with yes.
 if command -v flatpak >/dev/null; then
   sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE

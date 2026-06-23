@@ -19,6 +19,7 @@
     - name: Install packages
       community.general.pacman:
         name:
+          - ast-grep
           - base-devel
           - bat
           - bind
@@ -26,23 +27,31 @@
           - docker-buildx
           - docker-compose
           - dua-cli
+          - fd
           - fish
           - fuse3
+          - fzf
           - ghostty-terminfo
           - git
           - go-task
           - lazygit
+          - luarocks
           - neovim
           - npm
           - powerline
+          - python
+          - python-pip
           - rclone
           - rsync
           - ripgrep
           - strace
+          - stylua
           - tmux
           - tmuxp
           - uv
           - unison
+          - unzip
+          - wget
       notify: Reboot
     - name: sudo without password
       ansible.builtin.copy:

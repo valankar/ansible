@@ -7,14 +7,18 @@
     - archlinux_server
   vars:
     username: valankar
-    tmux_powerline: /usr/share/powerline/bindings/tmux/powerline.conf
   tasks:
-    - name: Update package cache
+    - name: Install rate-mirrors
       community.general.pacman:
+        name: rate-mirrors
         update_cache: true
+    - name: Run rate-mirrors and save mirrorlist
+      ansible.builtin.shell: |
+        rate-mirrors --allow-root arch | tee /etc/pacman.d/mirrorlist
     - name: Upgrade packages
       community.general.pacman:
         upgrade: true
+        update_cache: true
       notify: Reboot
     - name: Install packages
       community.general.pacman:
@@ -41,6 +45,7 @@
           - powerline
           - python
           - python-pip
+          - rate-mirrors
           - rclone
           - rsync
           - ripgrep
@@ -103,7 +108,7 @@
       changed_when: false
     - name: Enable linger
       ansible.builtin.command: "loginctl enable-linger {{ username }}"
-      when: not item.stat.exists
+      when: not linger_file.stat.exists
     - name: Setup tmux config
       block:
       - name: Ensure user tmux config directory exists
@@ -120,7 +125,7 @@
         owner: "{{ username }}"
         group: "{{ username }}"
         content: |
-          source {{ tmux_powerline }}
+          source /usr/share/powerline/bindings/tmux/powerline.conf
           set -g mouse on
           set-option -g mode-keys vi
     - name: paru setup

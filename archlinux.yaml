@@ -1,3 +1,4 @@
+# This is targeted to an Incus container. Instead of a dev user, just clone this container.
 # Install openssh
 # Connect as root, allow ssh as root with password
 # Install python
@@ -6,7 +7,6 @@
     - archlinux_server
   vars:
     username: valankar
-    dev_username: valankar-dev
     tmux_powerline: /usr/share/powerline/bindings/tmux/powerline.conf
   tasks:
     - name: Update package cache
@@ -65,13 +65,11 @@
       notify: Reboot
     - name: Add users to docker group, generate ssh key, set fish shell
       ansible.builtin.user:
-        name: "{{ item }}"
+        name: "{{ username }}"
         shell: /bin/fish
         groups: docker
         append: yes
         generate_ssh_key: true
-        ssh_key_comment: "{{ item }}@{{ ansible_facts['hostname'] }}"
-      loop: [ "{{ username }}", "{{ dev_username }}"]
     - name: Add user to wheel
       ansible.builtin.user:
         name: "{{ username }}"
@@ -100,32 +98,13 @@
         group: "root"
     - name: Check if lingering is enabled
       ansible.builtin.stat:
-        path: "/var/lib/systemd/linger/{{ item }}"
+        path: "/var/lib/systemd/linger/{{ username }}"
       register: linger_file
       changed_when: false
-      loop: [ "{{ username }}", "{{ dev_username }}"]
     - name: Enable linger
       ansible.builtin.command: "loginctl enable-linger {{ item.item }}"
       when: not item.stat.exists
       loop: "{{ linger_file.results }}"
-    - name: Setup ssh authorized keys
-      block:
-        - name: Read username pub key
-          ansible.builtin.slurp:
-            src: "/home/{{ username }}/.ssh/id_rsa.pub"
-          register: username_pub_ssh_key
-        - name: Read dev_username pub key
-          ansible.builtin.slurp:
-            src: "/home/{{ dev_username }}/.ssh/id_rsa.pub"
-          register: dev_username_pub_ssh_key
-        - name: Allow ssh from dev_username to username
-          ansible.posix.authorized_key:
-            user: "{{ username }}"
-            key: "{{ dev_username_pub_ssh_key.content | b64decode }}"
-        - name: Allow ssh from username to dev_username
-          ansible.posix.authorized_key:
-            user: "{{ dev_username }}"
-            key: "{{ username_pub_ssh_key.content | b64decode }}"
     - name: Setup tmux config
       block:
       - name: Ensure user tmux config directory exists

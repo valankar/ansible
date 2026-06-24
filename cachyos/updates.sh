@@ -19,6 +19,7 @@ fi
 yes | arch-update 2>&1 | tee -a $LOGFILE
 # Cleanup cache
 yes | paru -Scc 2>&1 | tee -a $LOGFILE
+sudo rm -rf /var/cache/pacman/pkg/download-*
 
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"

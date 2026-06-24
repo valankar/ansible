@@ -78,4 +78,7 @@ incus exec ansible -- bash
 git clone https://github.com/valankar/ansible.git
 # Update inventory.ini with IP
 ansible-playbook -i inventory.ini archlinux.yaml -k
+
+# Target
+incus exec arch -- su -l valankar -c arch-update
 ```

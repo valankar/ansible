@@ -68,12 +68,14 @@ incus launch images:archlinux arch
 incus exec arch -- pacman -Syu python openssh
 incus exec arch -- systemctl enable sshd
 incus exec arch -- passwd root
+incus exec arch -- vi /etc/ssh/sshd_config
 # Add PermitRootLogin yes to /etc/ssh/sshd_config
 incus exec arch -- systemctl start sshd
 
 # Master
 incus exec ansible -- bash
-# SSH to target as root to update known_hosts
+# SSH to target IP as root to update known_hosts
 git clone https://github.com/valankar/ansible.git
-
+# Update inventory.ini with IP
+ansible-playbook -i inventory.ini archlinux.yaml -k
 ```

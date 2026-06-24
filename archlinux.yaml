@@ -102,9 +102,8 @@
       register: linger_file
       changed_when: false
     - name: Enable linger
-      ansible.builtin.command: "loginctl enable-linger {{ item.item }}"
+      ansible.builtin.command: "loginctl enable-linger {{ username }}"
       when: not item.stat.exists
-      loop: "{{ linger_file.results }}"
     - name: Setup tmux config
       block:
       - name: Ensure user tmux config directory exists

@@ -36,6 +36,17 @@ setup-alpine
 
 Update `/etc/apk/repositories` with latest version.
 
+Add IPv6 to /etc/network/interfaces.
+
+```shell
+iface eth0 inet6 static
+   address 2a01:4f8:1c18:7158::1/64
+   dns-nameservers 2a01:4ff:ff00::add:1 2a01:4ff:ff00::add:2
+   gateway fe80::1
+```
+
+```
+```
 ## Packages
 
 ```

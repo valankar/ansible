@@ -45,12 +45,8 @@ iface eth0 inet6 static
    gateway fe80::1
 ```
 
-```
-```
 ## Packages
 
-```
-```
 ```shell
 doas apk -U upgrade
 doas apk add incus incus-client fuse3
@@ -64,6 +60,15 @@ reboot
 ```shell
 doas incus admin init
 doas addgroup valankar incus
+```
+
+### Port forwarding
+
+```shell
+incus network forward create incusbr0 EXTERNAL_IPV4
+incus network forward create incusbr0 EXTERNAL_IPV6
+incus network forward port add incusbr0 EXTERNAL_IPV4 tcp 80,443 INTERNAL_IPV4
+incus network forward port add incusbr0 EXTERNAL_IPV6 tcp 80,443 INTERNAL_IPV6
 ```
 
 ## Ansible

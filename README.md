@@ -98,3 +98,31 @@ ansible-playbook -i inventory.ini archlinux.yaml -k
 # Target
 incus exec arch -- su -l valankar -c arch-update
 ```
+
+## Rclone SSH mount before docker
+
+In order to mount a remote SSH filesystem via rclone and also have it mount before starting docker
+
+### /etc/systemd/system/mnt-hbd.mount
+
+```
+[Unit]
+Description=HBD mount
+After=network-online.target
+Wants=network-online.target
+Before=docker.service
+
+[Mount]
+What=hbd:
+Where=/mnt/hbd
+Type=rclone
+Options=rw,_netdev,uid=1000,gid=1000,allow_other,args2env,vfs-cache-mode=full,vfs-fast-fingerprint,config=/home/valankar/.config/rclone/rclone.conf,cache-dir=/var/cache/rclone
+```
+
+### /etc/systemd/system/docker.service.d/override.conf
+
+```
+[Unit]
+Requires=mnt-hbd.mount
+After=mnt-hbd.mount
+```

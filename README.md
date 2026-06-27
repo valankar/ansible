@@ -115,7 +115,7 @@ OUT=$(mktemp)
 apk -U upgrade > "$OUT" 2>&1
 cat "$OUT" >> "$LOG"
 
-if grep -qE "Upgrading|Installing|Installing for" "$OUT"; then
+if grep -qE "Upgrading|Installing" "$OUT"; then
     rm "$OUT"
     reboot
 fi

@@ -25,7 +25,7 @@ ansible-playbook -i inventory.ini cachyos.yaml --ask-become-pass --limit 192.168
 ansible-playbook -i inventory.ini cachyos.yaml --ask-become-pass --check --diff --limit localhost
 ```
 
-# alpine incus host
+# Alpine Incus host
 
 ## Installation
 
@@ -97,6 +97,30 @@ ansible-playbook -i inventory.ini archlinux.yaml -k
 
 # Target
 incus exec arch -- su -l valankar -c arch-update
+```
+
+## Alpine automatic updates
+
+### /etc/periodic/daily/apk-upgrade
+
+```shell
+#!/bin/sh
+
+LOG=/var/log/apk-upgrade.log
+
+echo "=== $(date) ===" >> "$LOG"
+
+OUT=$(mktemp)
+
+apk -U upgrade > "$OUT" 2>&1
+cat "$OUT" >> "$LOG"
+
+if grep -qE "Upgrading|Installing|Installing for" "$OUT"; then
+    rm "$OUT"
+    reboot
+fi
+
+rm "$OUT"
 ```
 
 ## Rclone SSH mount before docker

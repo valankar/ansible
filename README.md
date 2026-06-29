@@ -106,14 +106,9 @@ incus exec arch -- su -l valankar -c arch-update
 ```shell
 #!/bin/sh
 
-LOG=/var/log/apk-upgrade.log
-
-echo "=== $(date) ===" >> "$LOG"
-
 OUT=$(mktemp)
 
 apk -U upgrade > "$OUT" 2>&1
-cat "$OUT" >> "$LOG"
 
 if grep -qE "Upgrading|Installing" "$OUT"; then
     rm "$OUT"

@@ -49,9 +49,10 @@ iface eth0 inet6 static
 
 ```shell
 doas apk -U upgrade
-doas apk add incus incus-client fuse3
+doas apk add incus incus-client fuse3 rclone
 doas rc-update add incusd
 doas rc-update add fuse
+doas rc-update add netmount
 reboot
 ```
 
@@ -118,30 +119,18 @@ fi
 rm "$OUT"
 ```
 
-## Rclone SSH mount before docker
+## Rclone SSH mount
 
-In order to mount a remote SSH filesystem via rclone and also have it mount before starting docker
+The mount should be on the alpine host in order to start before Incus and docker within containers.
 
-### /etc/systemd/system/mnt-hbd.mount
-
-```
-[Unit]
-Description=HBD mount
-After=network-online.target
-Wants=network-online.target
-Before=docker.service
-
-[Mount]
-What=hbd:
-Where=/mnt/hbd
-Type=rclone
-Options=rw,_netdev,uid=1000,gid=1000,allow_other,args2env,vfs-cache-mode=full,vfs-fast-fingerprint,config=/home/valankar/.config/rclone/rclone.conf,cache-dir=/var/cache/rclone
-```
-
-### /etc/systemd/system/docker.service.d/override.conf
+### /etc/fstab
 
 ```
-[Unit]
-Requires=mnt-hbd.mount
-After=mnt-hbd.mount
+hbd: /mnt/hbd rclone rw,_netdev,uid=1001000,gid=1001000,allow_other,args2env,vfs-cache-mode=full,vfs-cache-max-size=5G,vfs-fast-fingerprint,config=/home/valankar/.config/rclone/rclone.conf,cache-dir=/var/cache/rclone
+```
+
+### Add device to container
+
+```shell
+incus config device add arch hbd disk source=/mnt/hbd path=/mnt/hbd
 ```

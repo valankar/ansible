@@ -72,6 +72,15 @@ incus network forward port add incusbr0 EXTERNAL_IPV4 tcp 80,443 INTERNAL_IPV4
 incus network forward port add incusbr0 EXTERNAL_IPV6 tcp 80,443 INTERNAL_IPV6
 ```
 
+### Snapshots
+
+Hourly snapshots to the default profile:
+
+```shell
+incus profile set default snapshots.schedule=@hourly
+incus profile set default snapshots.expiry=12H
+```
+
 ## Ansible
 
 ```shell

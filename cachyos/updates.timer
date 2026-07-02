@@ -4,6 +4,7 @@ Description=System updates
 [Timer]
 OnCalendar=*-*-* 00:30:00
 Persistent=true
+RandomizedDelaySec=5min
 
 [Install]
 WantedBy=timers.target

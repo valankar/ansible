@@ -130,12 +130,20 @@ rm "$OUT"
 
 ## Rclone SSH mount
 
-The mount should be on the alpine host in order to start before Incus and docker within containers.
+The mount should be on the alpine host and start before Incus. This lets docker in containers access the mount when they boot.
 
 ### /etc/fstab
 
 ```
 hbd: /mnt/hbd rclone rw,_netdev,uid=1001000,gid=1001000,allow_other,args2env,vfs-cache-mode=full,vfs-cache-max-size=5G,vfs-fast-fingerprint,config=/home/valankar/.config/rclone/rclone.conf,cache-dir=/var/cache/rclone
+```
+
+### /etc/conf.d/incusd
+
+Adding this will make sure the rclone mount happens before Incus is started.
+
+```
+rc_need="netmount"
 ```
 
 ### Add device to container

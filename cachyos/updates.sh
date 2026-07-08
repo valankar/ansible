@@ -7,7 +7,10 @@ until host google.com &>/dev/null; do
 done
 if systemctl list-unit-files kopia.service >/dev/null; then
   echo "Running kopia"
-  sudo systemctl start kopia
+  until sudo systemctl start kopia; do
+    echo "Kopia failed. Waiting."
+    sleep 30
+  done
 fi
 
 LOGFILE="$HOME/bin/updates.log"

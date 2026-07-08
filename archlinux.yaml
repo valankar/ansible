@@ -40,6 +40,7 @@
           - git
           - go-task
           - lazygit
+          - ledger
           - luarocks
           - neovim
           - npm

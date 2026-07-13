@@ -45,6 +45,8 @@ iface eth0 inet6 static
    gateway fe80::1
 ```
 
+Add `compress=zstd` to btrfs / mountmount.
+
 ## Packages
 
 ```shell

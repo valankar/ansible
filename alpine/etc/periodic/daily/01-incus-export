@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+INSTANCES=$(incus list -c n -f csv)
+for i in $INSTANCES; do
+  incus export $i --compression none --instance-only --optimized-storage - | ssh hbd "cat > incus-exports/$i.$(date +%u).tar"
+done
+
+fstrim -av
+curl -fsS -m 10 --retry 5 -o /dev/null URL

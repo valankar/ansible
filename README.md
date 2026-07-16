@@ -51,7 +51,7 @@ Add `compress=zstd` to btrfs / mountmount.
 
 ```shell
 doas apk -U upgrade
-doas apk add incus incus-client fuse3 rclone
+doas apk add curl incus incus-client fuse3 rclone util-linux
 doas rc-update add incusd
 doas rc-update add fuse
 doas rc-update add netmount
@@ -81,6 +81,23 @@ Hourly snapshots to the default profile:
 ```shell
 incus profile set default snapshots.schedule=@hourly
 incus profile set default snapshots.expiry=12H
+```
+
+### Backups
+
+Create a btrfs compressed loop file image to use for backups.
+
+```shell
+incus storage create mypool btrfs size=50GiB
+incus storage set mypool volume.btrfs.compression=zstd
+incus storage volume create mypool backups
+incus config set storage.backups_volume=mypool/backups
+```
+
+To run backups and save remotely, use something like:
+
+```shell
+incus export arch --compression none --instance-only --optimized-storage - | ssh hbd "cat > arch.$(date +%u).tar"
 ```
 
 ## Ansible

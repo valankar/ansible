@@ -58,6 +58,10 @@ doas rc-update add netmount
 reboot
 ```
 
+## Automatic updates
+
+See `alpine/etc/periodic/daily/02-apk-upgrade`
+
 ## Incus
 
 ```shell
@@ -94,11 +98,7 @@ incus storage volume create mypool backups
 incus config set storage.backups_volume=mypool/backups
 ```
 
-To run backups and save remotely, use something like:
-
-```shell
-incus export arch --compression none --instance-only --optimized-storage - | ssh hbd "cat > arch.$(date +%u).tar"
-```
+To run backups and save remotely, see `alpine/etc/periodic/daily/01-incus-export`.
 
 ## Ansible
 
@@ -126,25 +126,6 @@ ansible-playbook -i inventory.ini archlinux.yaml -k
 
 # Target
 incus exec arch -- su -l valankar -c arch-update
-```
-
-## Alpine automatic updates
-
-### /etc/periodic/daily/apk-upgrade
-
-```shell
-#!/bin/sh
-
-OUT=$(mktemp)
-
-apk -U upgrade > "$OUT" 2>&1
-
-if grep -qE "Upgrading|Installing" "$OUT"; then
-    rm "$OUT"
-    reboot
-fi
-
-rm "$OUT"
 ```
 
 ## Rclone SSH mount

@@ -1,6 +1,11 @@
 #!/bin/sh
 set -e
 
+if [ "$(df -P / | awk 'NR==2 {gsub(/%/, "", $5); print $5}')" -gt 70 ]; then
+  echo "Not enough free space"
+  exit 1
+fi
+
 INSTANCES=$(incus list -c n -f csv)
 for i in $INSTANCES; do
   incus export $i --compression none --instance-only --optimized-storage - | ssh hbd "cat > incus-exports/$i.$(date +%u).tar"

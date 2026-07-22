@@ -7,8 +7,11 @@ if [ "$(df -P / | awk 'NR==2 {gsub(/%/, "", $5); print $5}')" -gt 70 ]; then
 fi
 
 INSTANCES=$(incus list -c n -f csv)
+REMOTE=hbd
 for i in $INSTANCES; do
-  incus export $i --compression none --instance-only --optimized-storage - | ssh hbd "cat > incus-exports/$i.$(date +%u).tar"
+  OUT="incus-exports/$i.$(date +%u).tar"
+  incus export $i --compression none --instance-only --optimized-storage - | ssh $REMOTE "cat > $OUT"
+  ssh $REMOTE "nohup gzip -f $OUT >/dev/null 2>&1 </dev/null &"
 done
 
 fstrim -av

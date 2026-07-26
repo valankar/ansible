@@ -19,11 +19,13 @@ rm -f $LOGFILE
 if command -v flatpak >/dev/null; then
   sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
 fi
-yes | arch-update 2>&1 | tee -a $LOGFILE
+yes | head -100 | arch-update 2>&1 | tee -a $LOGFILE
 # Cleanup cache
 yes | paru -Scc 2>&1 | tee -a $LOGFILE
 sudo rm -rf /var/cache/pacman/pkg/download-*
 
+URL=https://hc-ping.com/...
+curl -fsS -m 10 --retry 5 -o /dev/null $URL
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"
   if pgrep plasmashell >/dev/null; then

@@ -51,10 +51,11 @@ Add `compress=zstd` to btrfs / mountmount.
 
 ```shell
 doas apk -U upgrade
-doas apk add curl incus incus-client fuse3 rclone util-linux
+doas apk add curl incus incus-client fuse3 rclone util-linux qemu-guest-agent
 doas rc-update add incusd
 doas rc-update add fuse
 doas rc-update add netmount
+doas rc-update add qemu-guest-agent
 reboot
 ```
 

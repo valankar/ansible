@@ -77,6 +77,8 @@ incus network forward create incusbr0 EXTERNAL_IPV4
 incus network forward create incusbr0 EXTERNAL_IPV6
 incus network forward port add incusbr0 EXTERNAL_IPV4 tcp 80,443 INTERNAL_IPV4
 incus network forward port add incusbr0 EXTERNAL_IPV6 tcp 80,443 INTERNAL_IPV6
+incus network forward port add incusbr0 EXTERNAL_IPV4 udp 443 INTERNAL_IPV4
+incus network forward port add incusbr0 EXTERNAL_IPV6 udp 443 INTERNAL_IPV6
 ```
 
 ### Snapshots

@@ -20,6 +20,11 @@ if command -v flatpak >/dev/null; then
   sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
 fi
 yes | head -100 | arch-update 2>&1 | tee -a $LOGFILE
+# Remove orphans
+orphans=$(paru -Qdtq)
+if [ -n "$orphans" ]; then
+  paru -Rns --noconfirm $orphans
+fi
 # Cleanup cache
 yes | paru -Scc 2>&1 | tee -a $LOGFILE
 sudo rm -rf /var/cache/pacman/pkg/download-*

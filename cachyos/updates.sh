@@ -21,9 +21,10 @@ if command -v flatpak >/dev/null; then
 fi
 yes | head -100 | arch-update 2>&1 | tee -a $LOGFILE
 # Remove orphans
-orphans=$(paru -Qdtq)
-if [ -n "$orphans" ]; then
-  paru -Rns --noconfirm $orphans
+if orphans=$(paru -Qdtq); then
+  if [ -n "$orphans" ]; then
+    paru -Rns --noconfirm $orphans
+  fi
 fi
 # Cleanup cache
 yes | paru -Scc 2>&1 | tee -a $LOGFILE

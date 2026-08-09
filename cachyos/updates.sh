@@ -23,7 +23,7 @@ yes | head -100 | arch-update 2>&1 | tee -a $LOGFILE
 # Remove orphans
 if orphans=$(paru -Qdtq); then
   if [ -n "$orphans" ]; then
-    paru -Rns --noconfirm $orphans
+    paru -Rns --noconfirm $orphans 2>&1 | tee -a $LOGFILE
   fi
 fi
 # Cleanup cache

@@ -43,6 +43,7 @@
           - ledger
           - luarocks
           - neovim
+          - npm
           - powerline
           - python
           - python-pip

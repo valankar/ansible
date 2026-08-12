@@ -27,6 +27,7 @@
           - base-devel
           - bat
           - bind
+          - btop
           - docker
           - docker-buildx
           - docker-compose

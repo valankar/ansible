@@ -46,6 +46,7 @@
           - neovim
           - npm
           - powerline
+          - powerline-fonts
           - python
           - python-pip
           - rate-mirrors
@@ -143,9 +144,11 @@
         use: paru
         name:
           - arch-update
+          - herdr-bin
           - kopia-bin
           - lazydocker-bin
           - opencode-bin
+          - powerline-go-bin
       become: yes
       become_user: "{{ username }}"
     - name: Copy package update script

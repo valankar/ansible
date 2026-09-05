@@ -132,6 +132,22 @@
           source /usr/share/powerline/bindings/tmux/powerline.conf
           set -g mouse on
           set-option -g mode-keys vi
+    - name: Setup herdr config
+      block:
+      - name: Ensure user herdr config directory exists
+        ansible.builtin.file:
+          path: "/home/{{ username }}/.config/herdr"
+          state: directory
+          mode: "755"
+          owner: "{{ username }}"
+          group: "{{ username }}"
+    - name: Setup herdr config
+      ansible.builtin.copy:
+        src: common/herdr_config.toml
+        dest: "/home/{{ username }}/.config/herdr/config.toml"
+        mode: "644"
+        owner: "{{ username }}"
+        group: "{{ username }}"
     - name: paru setup
       kewlfft.aur.aur:
         name: paru

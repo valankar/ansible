@@ -1,0 +1,19 @@
+onboarding = false
+
+[ui]
+pane_outer_borders = false
+pane_gaps = false
+sidebar_start_collapsed = true
+sidebar_collapsed_mode = "hidden"
+
+[[keys.command]]
+key = "prefix+M"
+type = "plugin_action"
+command = "drovr.move-tab"
+description = "move tab to workspace"
+
+[[keys.command]]
+key = "prefix+m"
+type = "plugin_action"
+command = "drovr.move-pane"
+description = "move pane to tab"

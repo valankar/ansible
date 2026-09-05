@@ -6,6 +6,9 @@ pane_gaps = false
 sidebar_start_collapsed = true
 sidebar_collapsed_mode = "hidden"
 
+[keys]
+last_pane = "prefix+0"
+
 [[keys.command]]
 key = "prefix+M"
 type = "plugin_action"

@@ -48,6 +48,13 @@ Add DNS servers to /etc/resolv.conf.
 
 Add `compress=zstd` to btrfs / mount.
 
+Setup time synchronization and check that it works (firewall might block source udp port 123 incoming)
+
+```shell
+setup-ntp
+ntpd -d -n -p pool.ntp.org -q
+```
+
 ## Packages
 
 ```shell

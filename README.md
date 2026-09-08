@@ -3,14 +3,15 @@ Ansible config for new machines.
 # Setup
 
 ```shell
-ansible-galaxy collection install hifis.toolkit
+uv sync
+ansible-galaxy collection install -r requirements.yml
 ```
 
 # Upgrade
 ```shell
 uv lock --upgrade
 uv sync
-ansible-galaxy collection install -U hifis.toolkit
+ansible-galaxy collection install -r requirements.yml --upgrade
 ```
 
 # Run
@@ -117,7 +118,7 @@ To run backups and save remotely, see `alpine/etc/periodic/daily/01-incus-export
 # Master
 incus launch images:archlinux ansible
 incus exec ansible -- pacman -Syu ansible ansible-core git openssh
-incus exec ansible -- ansible-galaxy collection install kewlfft.aur
+incus exec ansible -- ansible-galaxy collection install kewlfft.aur hifis.toolkit
 
 # Target
 incus launch images:archlinux arch

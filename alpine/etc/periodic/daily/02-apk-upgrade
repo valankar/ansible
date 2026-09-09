@@ -2,11 +2,12 @@
 
 OUT=$(mktemp)
 
-apk -U upgrade > "$OUT" 2>&1
+apk -U upgrade >"$OUT" 2>&1
 
 if grep -qE "Upgrading|Installing" "$OUT"; then
-    rm "$OUT"
-    reboot
+  rm "$OUT"
+  rc-service incusd stop
+  reboot
 fi
 
 rm "$OUT"

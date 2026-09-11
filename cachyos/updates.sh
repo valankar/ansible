@@ -30,8 +30,10 @@ fi
 yes | paru -Scc 2>&1 | tee -a $LOGFILE
 sudo rm -rf /var/cache/pacman/pkg/download-*
 
-URL=https://hc-ping.com/...
-curl -fsS -m 10 --retry 5 -o /dev/null $URL
+URL=""
+if [ -n "$URL" ]; then
+  curl -fsS -m 10 --retry 5 -o /dev/null $URL
+fi
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"
   if pgrep plasmashell >/dev/null; then

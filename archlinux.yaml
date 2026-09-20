@@ -173,7 +173,7 @@
       kewlfft.aur.aur:
         use: paru
         name:
-          - arch-update
+          - arch-update-bin
           - herdr-bin
           - kopia-bin
           - lazydocker-bin

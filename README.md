@@ -127,7 +127,8 @@ incus exec arch -- systemctl enable sshd
 incus exec arch -- passwd root
 incus exec arch -- vi /etc/ssh/sshd_config
 # Add PermitRootLogin yes to /etc/ssh/sshd_config
-incus exec arch -- systemctl start sshd
+# Disable udev in container according to https://wiki.archlinux.org/title/Incus#Disabling_udev_in_unprivileged_containers
+incus restart arch
 
 # Master
 incus exec ansible -- bash

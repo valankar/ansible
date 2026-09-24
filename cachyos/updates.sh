@@ -15,11 +15,10 @@ fi
 
 LOGFILE="$HOME/bin/updates.log"
 rm -f $LOGFILE
-# Flatpak does not seem to work with yes.
 if command -v flatpak >/dev/null; then
   sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
 fi
-yes | head -100 | arch-update 2>&1 | tee -a $LOGFILE
+paru -Syu --noconfirm --noprogressbar 2>&1 | tee $LOGFILE
 # Remove orphans
 if orphans=$(paru -Qdtq); then
   if [ -n "$orphans" ]; then

@@ -45,6 +45,7 @@
           - luarocks
           - neovim
           - npm
+          - opencode
           - powerline
           - powerline-fonts
           - python
@@ -177,7 +178,6 @@
           - herdr-bin
           - kopia-bin
           - lazydocker-bin
-          - opencode-bin
           - powerline-go-bin
       become: yes
       become_user: "{{ username }}"

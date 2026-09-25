@@ -18,7 +18,7 @@ rm -f $LOGFILE
 if command -v flatpak >/dev/null; then
   sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
 fi
-paru -Syu --noconfirm --noprogressbar 2>&1 | tee $LOGFILE
+paru -Syu --noconfirm --noprogressbar 2>&1 | tee -a $LOGFILE
 # Remove orphans
 if orphans=$(paru -Qdtq); then
   if [ -n "$orphans" ]; then

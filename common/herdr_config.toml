@@ -8,15 +8,3 @@ sidebar_collapsed_mode = "hidden"
 
 [keys]
 last_pane = "prefix+0"
-
-[[keys.command]]
-key = "prefix+M"
-type = "plugin_action"
-command = "drovr.move-tab"
-description = "move tab to workspace"
-
-[[keys.command]]
-key = "prefix+m"
-type = "plugin_action"
-command = "drovr.move-pane"
-description = "move pane to tab"

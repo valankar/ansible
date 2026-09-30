@@ -174,7 +174,6 @@
       kewlfft.aur.aur:
         use: paru
         name:
-          - arch-update-bin
           - herdr-bin
           - kopia-bin
           - lazydocker-bin
@@ -183,21 +182,14 @@
       become_user: "{{ username }}"
     - name: Copy package update script
       ansible.builtin.copy:
-        src: cachyos/updates.sh
+        src: common/updates.sh
         dest: "/home/{{ username }}/bin/updates.sh"
         mode: "755"
         owner: "{{ username }}"
         group: "{{ username }}"
-    - name: Copy arch-update config
-      ansible.builtin.copy:
-        src: cachyos/arch-update.conf
-        dest: "/home/{{ username }}/.config/arch-update/"
-        mode: "644"
-        owner: "{{ username }}"
-        group: "{{ username }}"
     - name: Add systemd user units
       ansible.builtin.copy:
-        src: "cachyos/{{ item }}"
+        src: "common/{{ item }}"
         dest: "/home/{{ username }}/.config/systemd/user/{{ item }}"
         mode: "644"
         owner: "{{ username }}"

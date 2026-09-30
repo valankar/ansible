@@ -17,13 +17,13 @@ ansible-galaxy collection install -r requirements.yml --upgrade
 # Run
 
 ```shell
-ansible-playbook -i inventory.ini debian.yaml --ask-become-pass
+ansible-playbook -i inventory.ini archlinux.yaml --ask-become-pass
 
 # Limiting to a host
-ansible-playbook -i inventory.ini cachyos.yaml --ask-become-pass --limit 192.168.0.3
+ansible-playbook -i inventory.ini archlinux.yaml --ask-become-pass --limit 192.168.0.3
 
 # Dry Run
-ansible-playbook -i inventory.ini cachyos.yaml --ask-become-pass --check --diff --limit localhost
+ansible-playbook -i inventory.ini archlinux.yaml --ask-become-pass --check --diff --limit localhost
 ```
 
 # Alpine Incus host
@@ -138,7 +138,7 @@ git clone https://github.com/valankar/ansible.git
 ansible-playbook -i inventory.ini archlinux.yaml -k
 
 # Target
-incus exec arch -- su -l valankar -c arch-update
+incus exec arch -- su -l valankar -c paru
 ```
 
 ## Rclone SSH mount

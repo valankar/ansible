@@ -3,15 +3,7 @@ Ansible config for new machines.
 # Setup
 
 ```shell
-uv sync
-ansible-galaxy collection install -r requirements.yml
-```
-
-# Upgrade
-```shell
-uv lock --upgrade
-uv sync
-ansible-galaxy collection install -r requirements.yml --upgrade
+ansible-galaxy collection install kewlfft.aur
 ```
 
 # Run
@@ -118,27 +110,28 @@ To run backups and save remotely, see `alpine/etc/periodic/daily/01-incus-export
 # Master
 incus launch images:archlinux ansible
 incus exec ansible -- pacman -Syu ansible ansible-core git openssh
-incus exec ansible -- ansible-galaxy collection install kewlfft.aur hifis.toolkit
+incus exec ansible -- ansible-galaxy collection install kewlfft.aur
 
 # Target
-incus launch images:archlinux arch
-incus exec arch -- pacman -Syu python openssh
-incus exec arch -- systemctl enable sshd
-incus exec arch -- passwd root
-incus exec arch -- vi /etc/ssh/sshd_config
+TARGET=arch-test
+incus launch images:archlinux $TARGET
+incus exec $TARGET -- pacman -Syu python openssh
+incus exec $TARGET -- systemctl enable sshd
+incus exec $TARGET -- passwd root
+incus exec $TARGET -- vi /etc/ssh/sshd_config
 # Add PermitRootLogin yes to /etc/ssh/sshd_config
 # Disable udev in container according to https://wiki.archlinux.org/title/Incus#Disabling_udev_in_unprivileged_containers
-incus restart arch
+incus restart $TARGET
 
 # Master
 incus exec ansible -- bash
-# SSH to target IP as root to update known_hosts
+# SSH to target as root to update known_hosts
 git clone https://github.com/valankar/ansible.git
-# Update inventory.ini with IP
+# Update inventory.ini with target
 ansible-playbook -i inventory.ini archlinux.yaml -k
 
 # Target
-incus exec arch -- su -l valankar -c paru
+incus exec $TARGET -- su -l valankar -c paru
 ```
 
 ## Rclone SSH mount

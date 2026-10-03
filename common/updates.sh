@@ -1,6 +1,22 @@
 #!/bin/bash
 set -e
 
+notification_bus="org.freedesktop.Notifications"
+notification_path="/org/freedesktop/Notifications"
+
+# Create notification
+if pgrep plasmashell >/dev/null; then
+  export DISPLAY=:0
+  export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+  KDE_RUNNING=true
+  notification_id=$(gdbus call --session \
+    --dest "$notification_bus" \
+    --object-path "$notification_path" \
+    --method "$notification_bus.Notify" \
+    "$0" 0 "" "Updates in progress" "Please wait..." \
+    '[]' '{}' 0 | grep -oP '(?<=uint32 )\d+')
+fi
+
 until host google.com &>/dev/null; do
   echo "Waiting for DNS..."
   sleep 2
@@ -35,10 +51,8 @@ if [ -n "$URL" ]; then
 fi
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"
-  if pgrep plasmashell >/dev/null; then
-    export DISPLAY=:0
-    export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
-    if qdbus6 org.kde.Shutdown /Shutdown org.kde.Shutdown.logoutAndReboot; then
+  if [[ -v KDE_RUNNING ]]; then
+    if gdbus call --session --dest org.kde.Shutdown --object-path /Shutdown --method org.kde.Shutdown.logoutAndReboot; then
       exit 0
     fi
   fi
@@ -47,4 +61,11 @@ if grep -q "upgrading" $LOGFILE; then
 fi
 
 echo "No reboot necessary"
+# Close notification
+if [[ -v KDE_RUNNING ]]; then
+  gdbus call --session \
+    --dest "$notification_bus" \
+    --object-path "$notification_path" \
+    --method "$notification_bus.CloseNotification" "$notification_id"
+fi
 exit 0

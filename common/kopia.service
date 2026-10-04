@@ -1,9 +1,0 @@
-# /etc/systemd/system/kopia.service
-[Unit]
-Description=Kopia backups
-
-[Service]
-Type=oneshot
-User=root
-ExecStart=kopia snapshot create --all --no-progress
-#ExecStartPost=curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/...

@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
+set -o pipefail
 
+CURL="curl -fsS -m 10 --retry 5 -o /dev/null"
+UPDATE_URL=""
+KOPIA_URL=""
 notification_bus="org.freedesktop.Notifications"
 notification_path="/org/freedesktop/Notifications"
 
@@ -21,16 +25,21 @@ until host google.com &>/dev/null; do
   echo "Waiting for DNS..."
   sleep 2
 done
-if systemctl list-unit-files kopia.service >/dev/null; then
-  echo "Running kopia"
-  until sudo systemctl start kopia; do
-    echo "Kopia failed. Waiting."
-    sleep 30
-  done
-fi
 
 LOGFILE="$HOME/bin/updates.log"
 rm -f $LOGFILE
+
+if sudo kopia repository status >/dev/null; then
+  echo "Running kopia"
+  until sudo kopia snapshot create --all --no-progress 2>&1 | tee -a $LOGFILE; do
+    echo "Kopia failed. Waiting."
+    sleep 30
+  done
+  if [ -n "$KOPIA_URL" ]; then
+    $CURL $KOPIA_URL
+  fi
+fi
+
 if command -v flatpak >/dev/null; then
   sudo flatpak update --noninteractive -y 2>&1 | tee -a $LOGFILE
 fi
@@ -42,12 +51,14 @@ if orphans=$(paru -Qdtq); then
   fi
 fi
 # Cleanup cache
-yes | paru -Scc 2>&1 | tee -a $LOGFILE
+(
+  set +o pipefail
+  yes | paru -Scc 2>&1 | tee -a $LOGFILE
+)
 sudo rm -rf /var/cache/pacman/pkg/download-*
 
-URL=""
-if [ -n "$URL" ]; then
-  curl -fsS -m 10 --retry 5 -o /dev/null $URL
+if [ -n "$UPDATE_URL" ]; then
+  $CURL $UPDATE_URL
 fi
 if grep -q "upgrading" $LOGFILE; then
   echo "Rebooting due to package updates"

@@ -93,15 +93,6 @@ incus profile set default snapshots.expiry=12H
 
 ### Backups
 
-Create a btrfs compressed loop file image to use for backups.
-
-```shell
-incus storage create mypool btrfs size=60GiB
-incus storage set mypool volume.btrfs.compression=zstd
-incus storage volume create mypool backups
-incus config set storage.backups_volume=mypool/backups
-```
-
 To run backups and save remotely, see `alpine/etc/periodic/daily/01-incus-export`.
 
 ## Ansible

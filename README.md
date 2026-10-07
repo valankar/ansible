@@ -111,7 +111,7 @@ incus exec $TARGET -- systemctl enable sshd
 incus exec $TARGET -- passwd root
 incus exec $TARGET -- vi /etc/ssh/sshd_config
 # Add PermitRootLogin yes to /etc/ssh/sshd_config
-# Disable udev in container according to https://wiki.archlinux.org/title/Incus#Disabling_udev_in_unprivileged_containers
+# Disable udev explained below
 incus restart $TARGET
 
 # Master
@@ -124,6 +124,11 @@ ansible-playbook -i inventory.ini archlinux.yaml -k
 # Target
 incus exec $TARGET -- su -l valankar -c paru
 ```
+
+### Disable udev
+
+On TARGET, [disable udev](https://wiki.archlinux.org/title/Incus#Disabling_udev_in_unprivileged_containers) because it does not work in 
+non-privileged containers.
 
 ## Rclone SSH mount
 

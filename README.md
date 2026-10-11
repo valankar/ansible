@@ -74,12 +74,13 @@ doas addgroup valankar incus
 ### Port forwarding
 
 ```shell
-incus network forward create incusbr0 EXTERNAL_IPV4
-incus network forward create incusbr0 EXTERNAL_IPV6
-incus network forward port add incusbr0 EXTERNAL_IPV4 tcp 80,443 INTERNAL_IPV4
-incus network forward port add incusbr0 EXTERNAL_IPV6 tcp 80,443 INTERNAL_IPV6
-incus network forward port add incusbr0 EXTERNAL_IPV4 udp 443 INTERNAL_IPV4
-incus network forward port add incusbr0 EXTERNAL_IPV6 udp 443 INTERNAL_IPV6
+TARGET=arch
+incus config device add $TARGET http-proxy proxy listen=tcp:0.0.0.0:80 connect=tcp:0.0.0.0:80 nat=true
+incus config device add $TARGET https-tcp-proxy proxy listen=tcp:0.0.0.0:443 connect=tcp:0.0.0.0:443 nat=true
+incus config device add $TARGET https-udp-proxy proxy listen=udp:0.0.0.0:443 connect=udp:0.0.0.0:443 nat=true
+incus config device add $TARGET http-proxy-v6 proxy listen=tcp:[::]:80 connect=tcp:[::]:80 nat=true
+incus config device add $TARGET https-tcp-proxy-v6 proxy listen=tcp:[::]:443 connect=tcp:[::]:443 nat=true
+incus config device add $TARGET https-udp-proxy-v6 proxy listen=udp:[::]:443 connect=udp:[::]:443 nat=true
 ```
 
 ### Snapshots
@@ -96,6 +97,8 @@ incus profile set default snapshots.expiry=12H
 To run backups and save remotely, see `alpine/etc/periodic/daily/01-incus-export`.
 
 ## Ansible
+
+### Arch container
 
 ```shell
 # Master
@@ -124,6 +127,12 @@ ansible-playbook -i inventory.ini archlinux.yaml -k
 # Target
 incus exec $TARGET -- su -l valankar -c paru
 ```
+
+### Debian container
+
+```shell
+```
+
 
 ### Disable udev
 

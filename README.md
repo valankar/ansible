@@ -51,12 +51,13 @@ ntpd -d -n -p pool.ntp.org -q
 ## Packages
 
 ```shell
-doas apk -U upgrade
-doas apk add curl incus incus-client fuse3 rclone util-linux qemu-guest-agent
-doas rc-update add incusd
-doas rc-update add fuse
-doas rc-update add netmount
-doas rc-update add qemu-guest-agent
+echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
+apk -U upgrade
+apk add curl incus incus-client fuse3 rclone util-linux qemu-guest-agent kopia@testing
+rc-update add incusd
+rc-update add fuse
+rc-update add netmount
+rc-update add qemu-guest-agent
 reboot
 ```
 
@@ -67,8 +68,8 @@ See `alpine/etc/periodic/daily/02-apk-upgrade`
 ## Incus
 
 ```shell
-doas incus admin init
-doas addgroup valankar incus
+incus admin init
+addgroup valankar incus
 ```
 
 ### Port forwarding

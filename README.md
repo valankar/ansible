@@ -53,7 +53,7 @@ ntpd -d -n -p pool.ntp.org -q
 ```shell
 echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 apk -U upgrade
-apk add curl incus incus-client fuse3 rclone util-linux qemu-guest-agent kopia@testing
+apk add curl gpg gpg-agent incus incus-client fuse3 rclone util-linux qemu-guest-agent kopia@testing
 rc-update add incusd
 rc-update add fuse
 rc-update add netmount

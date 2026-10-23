@@ -16,9 +16,10 @@ fi
 
 INSTANCES=$(incus list -c n -f csv)
 for i in $INSTANCES; do
-  OUT="incus-exports/$i.$(date +%u).tar"
-  incus export $i --compression none --instance-only --optimized-storage - | ssh $REMOTE "cat > $OUT"
-  ssh $REMOTE "nohup gzip -f $OUT >/dev/null 2>&1 </dev/null &"
+  OUT="incus-exports/$i.$(date +%u).tar.gpg"
+  incus export $i --compression none --instance-only --optimized-storage - |
+    gpg --batch --yes --symmetric --passphrase-file ~/.gnupg/password.txt - |
+    ssh $REMOTE "cat > $OUT"
 done
 
 fstrim -av

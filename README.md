@@ -77,21 +77,21 @@ addgroup valankar incus
 ```shell
 TARGET=arch
 EXTERNAL_V4=1.2.3.4
-EXTERNAL_V6=[aaaa:bbbb]
+EXTERNAL_V6=aaaa:bbbb
 INTERNAL_V4=1.2.3.4
-INTERNAL_V6=[aaaa:bbbb]
+INTERNAL_V6=aaaa:bbbb
 
+incus network set incusbr0 ipv6.dhcp.stateful=true
 incus config device override $TARGET eth0
 incus config device set $TARGET eth0 ipv4.address=$INTERNAL_V4
-incus network set incusbr0 ipv6.dhcp.stateful=true
 incus config device set $TARGET eth0 ipv6.address=$INTERNAL_V6
 
 incus config device add $TARGET http-proxy proxy listen=tcp:$EXTERNAL_V4:80 connect=tcp:$INTERNAL_V4:80 nat=true
 incus config device add $TARGET https-tcp-proxy proxy listen=tcp:$EXTERNAL_V4:443 connect=tcp:$INTERNAL_V4:443 nat=true
 incus config device add $TARGET https-udp-proxy proxy listen=udp:$EXTERNAL_V4:443 connect=udp:$INTERNAL_V4:443 nat=true
-incus config device add $TARGET http-proxy-v6 proxy listen=tcp:$EXTERNAL_V6:80 connect=tcp:$INTERNAL_V6:80 nat=true
-incus config device add $TARGET https-tcp-proxy-v6 proxy listen=tcp:$EXTERNAL_V6:443 connect=tcp:$INTERNAL_V6:443 nat=true
-incus config device add $TARGET https-udp-proxy-v6 proxy listen=udp:$EXTERNAL_V6:443 connect=udp:$INTERNAL_V6:443 nat=true
+incus config device add $TARGET http-proxy-v6 proxy listen=tcp:[$EXTERNAL_V6]:80 connect=tcp:[$INTERNAL_V6]:80 nat=true
+incus config device add $TARGET https-tcp-proxy-v6 proxy listen=tcp:[$EXTERNAL_V6]:443 connect=tcp:[$INTERNAL_V6]:443 nat=true
+incus config device add $TARGET https-udp-proxy-v6 proxy listen=udp:[$EXTERNAL_V6]:443 connect=udp:[$INTERNAL_V6]:443 nat=true
 ```
 
 ### Snapshots

@@ -156,14 +156,14 @@ incus exec $TARGET -- su -l valankar -c paru
 On TARGET, [disable udev](https://wiki.archlinux.org/title/Incus#Disabling_udev_in_unprivileged_containers) because it does not work in 
 non-privileged containers.
 
-## Rclone SSH mount
+## Rclone mount
 
 The mount should be on the alpine host and start before Incus. This lets docker in containers access the mount when they boot.
 
 ### /etc/fstab
 
 ```
-hbd: /mnt/hbd rclone rw,_netdev,uid=1001000,gid=1001000,allow_other,args2env,vfs-cache-mode=full,vfs-cache-max-size=5G,vfs-fast-fingerprint,config=/home/valankar/.config/rclone/rclone.conf,cache-dir=/var/cache/rclone
+hbd: /mnt/hbd rclone rw,_netdev,uid=1001000,gid=1001000,allow_other,args2env,vfs-cache-mode=full,vfs-cache-max-size=5G,vfs-fast-fingerprint,config=/root/.config/rclone/rclone.conf,cache-dir=/var/cache/rclone
 ```
 
 ### /etc/conf.d/incusd

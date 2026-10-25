@@ -57,7 +57,13 @@ apk add curl gpg gpg-agent incus incus-client fuse3 rclone util-linux qemu-guest
 rc-update add incusd
 rc-update add fuse
 rc-update add netmount
+# If running on a VPS
 rc-update add qemu-guest-agent
+
+# For VMs
+apk add incus-vm
+echo "tun" | tee -a /etc/modules
+
 reboot
 ```
 

@@ -106,7 +106,7 @@ Hourly snapshots to the default profile:
 
 ```shell
 incus profile set default snapshots.schedule=@hourly
-incus profile set default snapshots.expiry=12H
+incus profile set default snapshots.expiry=1d
 ```
 
 ### Backups

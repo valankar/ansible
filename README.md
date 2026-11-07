@@ -62,7 +62,7 @@ echo "br_netfilter" | tee -a /etc/modules
 rc-update add qemu-guest-agent
 
 # For VMs
-apk add incus-vm
+apk add incus-vm qemu-audio-spice
 echo "tun" | tee -a /etc/modules
 
 reboot

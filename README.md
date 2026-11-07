@@ -41,6 +41,11 @@ Add DNS servers to /etc/resolv.conf.
 
 Add `compress=zstd` to btrfs / mount.
 
+Enable zswap by updating `/etc/update-extlinux.conf` with:
+```shell
+default_kernel_opts="quiet rootfstype=btrfs zswap.enabled=1 zswap.shrinker_enabled=1"
+```
+
 Setup time synchronization and check that it works (firewall might block source udp port 123 incoming)
 
 ```shell

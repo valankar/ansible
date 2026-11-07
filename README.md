@@ -57,6 +57,7 @@ apk add curl gpg gpg-agent incus incus-client fuse3 rclone util-linux qemu-guest
 rc-update add incusd
 rc-update add fuse
 rc-update add netmount
+echo "br_netfilter" | tee -a /etc/modules
 # If running on a VPS
 rc-update add qemu-guest-agent
 

@@ -41,10 +41,39 @@ Add DNS servers to /etc/resolv.conf.
 
 Add `compress=zstd` to btrfs / mount.
 
-Enable zswap by updating `/etc/update-extlinux.conf` with:
+## Zswap
+
+See [this article](https://chrisdown.name/2026/03/24/zswap-vs-zram-when-to-use-what.html) for info.
+
+### Extlinux
+
+Update `/etc/update-extlinux.conf` with:
+
 ```shell
 default_kernel_opts="quiet rootfstype=btrfs zswap.enabled=1 zswap.shrinker_enabled=1"
 ```
+
+Then run:
+
+```shell
+update-extlinux
+```
+
+### Grub
+
+Update `/etc/default/grub` with:
+
+```shell
+GRUB_CMDLINE_LINUX_DEFAULT="modules=sd-mod,usb-storage,btrfs quiet rootfstype=btrfs zswap.enabled=1 zswap.shrinker_enabled=1"
+```
+
+Then run:
+
+```shell
+grub-mkconfig -o /boot/grub/grub.cfg
+```
+
+## NTP
 
 Setup time synchronization and check that it works (firewall might block source udp port 123 incoming)
 
